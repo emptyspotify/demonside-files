@@ -1,0 +1,23 @@
+{
+  "de_nuke": [
+    {"name": "ramp 1", "pos": {"x": 1146.63, "y": -1198.48, "z": -688.97}, "eye_pos": {"x": 1146.63, "y": -1198.48, "z": -642.97}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "ct spawn 1", "pos": {"x": 1100.04, "y": -493.81, "z": -639.97}, "eye_pos": {"x": 1100.04, "y": -493.81, "z": -575.97}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "stand"},
+    {"name": "ramp 2", "pos": {"x": 919.06, "y": -295.41, "z": -767.97}, "eye_pos": {"x": 919.06, "y": -295.41, "z": -721.97}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "ramp 3", "pos": {"x": 1359.02, "y": -2367.39, "z": -373.97}, "eye_pos": {"x": 1359.02, "y": -2367.39, "z": -327.97}, "angles": {"pitch": 6.52, "yaw": 112.2, "roll": 0}, "type": "crouch"},
+    {"name": "ramp 4", "pos": {"x": 1191.66, "y": -1231.53, "z": -666.94}, "eye_pos": {"x": 1191.66, "y": -1231.53, "z": -620.94}, "angles": {"pitch": -0.3, "yaw": 127.78, "roll": 0}, "type": "crouch"},
+    {"name": "ramp 5", "pos": {"x": 1341.16, "y": -799, "z": -703.29}, "eye_pos": {"x": 1341.16, "y": -799, "z": -657.29}, "angles": {"pitch": -3.76, "yaw": 127.13, "roll": 0}, "type": "crouch"},
+    {"name": "ct 1", "pos": {"x": 1100.04, "y": -483.81, "z": -639.97}, "eye_pos": {"x": 1100.04, "y": -483.81, "z": -593.97}, "angles": {"pitch": -13.3, "yaw": 145.55, "roll": 0}, "type": "crouch"},
+    {"name": "ramp 6", "pos": {"x": 1142.56, "y": -602.82, "z": -639.97}, "eye_pos": {"x": 1142.56, "y": -602.82, "z": -593.97}, "angles": {"pitch": 2.17, "yaw": 116.21, "roll": 0}, "type": "crouch"},
+    {"name": "ramp 7", "pos": {"x": 850.44, "y": -272.53, "z": -767.97}, "eye_pos": {"x": 850.44, "y": -272.53, "z": -721.97}, "angles": {"pitch": -11.69, "yaw": 90.83, "roll": 0}, "type": "crouch"},
+    {"name": "ramp 8", "pos": {"x": 653.33, "y": -411.26, "z": -701.86}, "eye_pos": {"x": 653.33, "y": -411.26, "z": -655.86}, "angles": {"pitch": -1.02, "yaw": 90.77, "roll": 0}, "type": "crouch"},
+    {"name": "window 1", "pos": {"x": 501.53, "y": 24.46, "z": -415.97}, "eye_pos": {"x": 501.53, "y": 24.46, "z": -369.97}, "angles": {"pitch": 14.08, "yaw": -42.3, "roll": 0}, "type": "crouch"},
+    {"name": "double 1", "pos": {"x": 519.36, "y": 166.24, "z": -414.97}, "eye_pos": {"x": 519.36, "y": 166.24, "z": -368.97}, "angles": {"pitch": 16.94, "yaw": -68.89, "roll": 0}, "type": "crouch"},
+    {"name": "site 1", "pos": {"x": 524.23, "y": 274.31, "z": -319.97}, "eye_pos": {"x": 524.23, "y": 274.31, "z": -273.97}, "angles": {"pitch": 18.26, "yaw": -80.31, "roll": 0}, "type": "crouch"},
+    {"name": "single 1", "pos": {"x": 590.78, "y": 280.37, "z": -319.97}, "eye_pos": {"x": 590.78, "y": 280.37, "z": -273.97}, "angles": {"pitch": 16.28, "yaw": -93.12, "roll": 0}, "type": "crouch"},
+    {"name": "window 2", "pos": {"x": 828, "y": 60.16, "z": -639.97}, "eye_pos": {"x": 828, "y": 60.16, "z": -593.97}, "angles": {"pitch": 0.28, "yaw": -65.21, "roll": 0}, "type": "crouch"},
+    {"name": "plant 1", "pos": {"x": 902.04, "y": -357.71, "z": -639.97}, "eye_pos": {"x": 902.04, "y": -357.71, "z": -593.97}, "angles": {"pitch": 11.25, "yaw": -106.87, "roll": 0}, "type": "crouch"},
+    {"name": "window 3", "pos": {"x": 943.97, "y": -441.9, "z": -767.97}, "eye_pos": {"x": 943.97, "y": -441.9, "z": -721.97}, "angles": {"pitch": -9.05, "yaw": -30.26, "roll": 0}, "type": "crouch"},
+    {"name": "vents 1", "pos": {"x": 1035.34, "y": -1022.44, "z": -767.47}, "eye_pos": {"x": 1035.34, "y": -1022.44, "z": -721.47}, "angles": {"pitch": -16.11, "yaw": -92.77, "roll": 0}, "type": "crouch"},
+    {"name": "t spawn 1", "pos": {"x": 803.3, "y": -1306.06, "z": -765.97}, "eye_pos": {"x": 803.3, "y": -1306.06, "z": -701.97}, "angles": {"pitch": -4.65, "yaw": -48.57, "roll": 0}, "type": "stand"}
+  ]
+}

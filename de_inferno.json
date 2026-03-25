@@ -1,0 +1,31 @@
+{
+  "de_inferno": [
+    {"name": "short 1", "pos": {"x": 956.47, "y": 711.97, "z": 105.98}, "eye_pos": {"x": 956.47, "y": 711.97, "z": 151.98}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "balcony 1", "pos": {"x": 1890.32, "y": 451.07, "z": 159.99}, "eye_pos": {"x": 1890.32, "y": 451.07, "z": 205.99}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "balcony 2", "pos": {"x": 1819.03, "y": 608.03, "z": 159.92}, "eye_pos": {"x": 1819.03, "y": 608.03, "z": 205.92}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "short 2", "pos": {"x": 2130.03, "y": -155.42, "z": 159.03}, "eye_pos": {"x": 2130.03, "y": -155.42, "z": 205.03}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "site 1", "pos": {"x": 1348.96, "y": 791.97, "z": 143.19}, "eye_pos": {"x": 1348.96, "y": 791.97, "z": 189.19}, "angles": {"pitch": -4.69, "yaw": -28.78, "roll": 0}, "type": "crouch"},
+    {"name": "library(crouch) 1", "pos": {"x": 1433.96, "y": 936.8, "z": 147.49}, "eye_pos": {"x": 1433.96, "y": 936.8, "z": 193.49}, "angles": {"pitch": -0.9, "yaw": 10.52, "roll": 0}, "type": "crouch"},
+    {"name": "site 2", "pos": {"x": 1946.96, "y": 1031.84, "z": 167.23}, "eye_pos": {"x": 1946.96, "y": 1031.84, "z": 213.23}, "angles": {"pitch": -0.28, "yaw": -90.82, "roll": 0}, "type": "crouch"},
+    {"name": "library 1", "pos": {"x": 2153.68, "y": 1141.02, "z": 166.8}, "eye_pos": {"x": 2153.68, "y": 1141.02, "z": 212.8}, "angles": {"pitch": 3.96, "yaw": 44.18, "roll": 0}, "type": "crouch"},
+    {"name": "short 3", "pos": {"x": 1265.48, "y": 87.69, "z": 256.03}, "eye_pos": {"x": 1265.48, "y": 87.69, "z": 302.03}, "angles": {"pitch": 9.35, "yaw": 0.03, "roll": 0}, "type": "crouch"},
+    {"name": "short 4", "pos": {"x": 1892.8, "y": -309.88, "z": 261.03}, "eye_pos": {"x": 1892.8, "y": -309.88, "z": 307.03}, "angles": {"pitch": 9.18, "yaw": 134.56, "roll": 0}, "type": "crouch"},
+    {"name": "long 1", "pos": {"x": 1947.4, "y": 365.76, "z": 160.03}, "eye_pos": {"x": 1947.4, "y": 365.76, "z": 206.03}, "angles": {"pitch": -0.69, "yaw": 90.12, "roll": 0}, "type": "crouch"},
+    {"name": "balcony 3", "pos": {"x": 1820.12, "y": 608.03, "z": 159.92}, "eye_pos": {"x": 1820.12, "y": 608.03, "z": 205.92}, "angles": {"pitch": -8.66, "yaw": -79.89, "roll": 0}, "type": "crouch"},
+    {"name": "short 5", "pos": {"x": 2171.37, "y": -240.36, "z": 131.03}, "eye_pos": {"x": 2171.37, "y": -240.36, "z": 177.03}, "angles": {"pitch": -1.43, "yaw": 149.83, "roll": 0}, "type": "crouch"},
+    {"name": "apps 1", "pos": {"x": 2076.27, "y": -260.85, "z": 96.03}, "eye_pos": {"x": 2076.27, "y": -260.85, "z": 142.03}, "angles": {"pitch": -8.42, "yaw": -178.05, "roll": 0}, "type": "crouch"},
+    {"name": "short 6", "pos": {"x": 732.44, "y": 340.23, "z": 93.38}, "eye_pos": {"x": 732.44, "y": 340.23, "z": 139.38}, "angles": {"pitch": 0.85, "yaw": 29.33, "roll": 0}, "type": "crouch"},
+    {"name": "balcony 4", "pos": {"x": 2076.77, "y": -262.87, "z": 96.03}, "eye_pos": {"x": 2076.77, "y": -262.87, "z": 142.03}, "angles": {"pitch": -39.22, "yaw": 165.04, "roll": 0}, "type": "crouch"},
+    {"name": "apps 2", "pos": {"x": 2130.03, "y": -131.4, "z": 159.03}, "eye_pos": {"x": 2130.03, "y": -131.4, "z": 205.03}, "angles": {"pitch": -5.31, "yaw": -165.07, "roll": 0}, "type": "crouch"},
+    {"name": "under balcony 1", "pos": {"x": 1874.74, "y": -288.8, "z": 261.03}, "eye_pos": {"x": 1874.74, "y": -288.8, "z": 307.03}, "angles": {"pitch": 18.95, "yaw": 31.22, "roll": 0}, "type": "crouch"},
+    {"name": "short 7", "pos": {"x": 2562.52, "y": 1311.27, "z": 160.03}, "eye_pos": {"x": 2562.52, "y": 1311.27, "z": 206.03}, "angles": {"pitch": -2.42, "yaw": -122.08, "roll": 0}, "type": "crouch"},
+    {"name": "balcony 5", "pos": {"x": 2548.41, "y": 1161.65, "z": 158.16}, "eye_pos": {"x": 2548.41, "y": 1161.65, "z": 204.16}, "angles": {"pitch": -4.23, "yaw": -113.07, "roll": 0}, "type": "crouch"},
+    {"name": "middle 1", "pos": {"x": 2539.46, "y": 1157.96, "z": 158.45}, "eye_pos": {"x": 2539.46, "y": 1157.96, "z": 204.45}, "angles": {"pitch": -0.3, "yaw": -168.45, "roll": 0}, "type": "crouch"},
+    {"name": "short 8", "pos": {"x": 2429.25, "y": 1401.77, "z": 158.05}, "eye_pos": {"x": 2429.25, "y": 1401.77, "z": 204.05}, "angles": {"pitch": 4.89, "yaw": -137.13, "roll": 0}, "type": "crouch"},
+    {"name": "plant 1", "pos": {"x": 1987.69, "y": 1009.03, "z": 232.03}, "eye_pos": {"x": 1987.69, "y": 1009.03, "z": 278.03}, "angles": {"pitch": 4.02, "yaw": -93.1, "roll": 0}, "type": "crouch"},
+    {"name": "plant 2", "pos": {"x": 1995.57, "y": 1009.03, "z": 232.03}, "eye_pos": {"x": 1995.57, "y": 1009.03, "z": 278.03}, "angles": {"pitch": 4.7, "yaw": -99.4, "roll": 0}, "type": "crouch"},
+    {"name": "plant 3", "pos": {"x": 1994.18, "y": 1009.03, "z": 232.03}, "eye_pos": {"x": 1994.18, "y": 1009.03, "z": 278.03}, "angles": {"pitch": 4.4, "yaw": -81.82, "roll": 0}, "type": "crouch"},
+    {"name": "balcony 6", "pos": {"x": 1262.97, "y": -637.08, "z": 128.03}, "eye_pos": {"x": 1262.97, "y": -637.08, "z": 174.03}, "angles": {"pitch": -10.01, "yaw": 27.16, "roll": 0}, "type": "crouch"},
+    {"name": "middle 2", "pos": {"x": 1209.97, "y": 161.07, "z": 211.35}, "eye_pos": {"x": 1209.97, "y": 161.07, "z": 257.35}, "angles": {"pitch": 14.93, "yaw": 109.67, "roll": 0}, "type": "crouch"}
+  ]
+}

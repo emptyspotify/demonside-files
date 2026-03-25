@@ -1,0 +1,15 @@
+{
+  "de_dust2": [
+    {"name": "ramp 1", "pos": {"x": 1176.13, "y": 2282.18, "z": 9.16}, "eye_pos": {"x": 1176.13, "y": 2282.18, "z": 73.16}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "stand"},
+    {"name": "ctspawn 1", "pos": {"x": 1330.29, "y": 2398.27, "z": 40.07}, "eye_pos": {"x": 1330.29, "y": 2398.27, "z": 86.07}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "ctspawn 2", "pos": {"x": 864.7, "y": 2414.4, "z": 127.03}, "eye_pos": {"x": 864.7, "y": 2414.4, "z": 173.03}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "ctspawn 3", "pos": {"x": 319.11, "y": 1672.99, "z": 40.03}, "eye_pos": {"x": 319.11, "y": 1672.99, "z": 104.03}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "stand"},
+    {"name": "short 1", "pos": {"x": -330.39, "y": 2096.28, "z": -128.15}, "eye_pos": {"x": -330.39, "y": 2096.28, "z": -82.15}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "ctspawn 4", "pos": {"x": 1570.27, "y": 1049.03, "z": 1.03}, "eye_pos": {"x": 1570.27, "y": 1049.03, "z": 47.03}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "long 1", "pos": {"x": 239.54, "y": 2338.78, "z": -119.97}, "eye_pos": {"x": 239.54, "y": 2338.78, "z": -73.97}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "top middle / long 1", "pos": {"x": 591.16, "y": 474.74, "z": 1.23}, "eye_pos": {"x": 591.16, "y": 474.74, "z": 47.23}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "middle 1", "pos": {"x": -368.39, "y": -819.68, "z": 83.73}, "eye_pos": {"x": -368.39, "y": -819.68, "z": 147.73}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "stand"},
+    {"name": "middle 2", "pos": {"x": -359.77, "y": 1577.82, "z": -126.61}, "eye_pos": {"x": -359.77, "y": 1577.82, "z": -80.61}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "middle 3", "pos": {"x": -524.28, "y": 1740.34, "z": -117.49}, "eye_pos": {"x": -524.28, "y": 1740.34, "z": -71.49}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"}
+  ]
+}

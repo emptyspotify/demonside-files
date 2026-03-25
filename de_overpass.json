@@ -1,0 +1,20 @@
+{
+  "de_overpass": [
+    {"name": "site 1", "pos": {"x": -175.25, "y": -986.32, "z": 33.77}, "eye_pos": {"x": -175.25, "y": -986.32, "z": 79.77}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "canal 1", "pos": {"x": -1804.44, "y": 218.18, "z": 169.72}, "eye_pos": {"x": -1804.44, "y": 218.18, "z": 215.72}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "short / canal 1", "pos": {"x": -1286.04, "y": -80.28, "z": 145.03}, "eye_pos": {"x": -1286.04, "y": -80.28, "z": 191.03}, "angles": {"pitch": 0, "yaw": 0, "roll": 0}, "type": "crouch"},
+    {"name": "red 1", "pos": {"x": -1040.98, "y": -2100.03, "z": 340.03}, "eye_pos": {"x": -1040.98, "y": -2100.03, "z": 386.03}, "angles": {"pitch": 5.53, "yaw": 111.44, "roll": 0}, "type": "crouch"},
+    {"name": "site 2", "pos": {"x": -221.9, "y": -1210.82, "z": 28.6}, "eye_pos": {"x": -221.9, "y": -1210.82, "z": 74.6}, "angles": {"pitch": -6.57, "yaw": 131.74, "roll": 0}, "type": "crouch"},
+    {"name": "pit 1", "pos": {"x": -530.54, "y": -870.07, "z": 13.37}, "eye_pos": {"x": -530.54, "y": -870.07, "z": 59.37}, "angles": {"pitch": 2.42, "yaw": 121.42, "roll": 0}, "type": "crouch"},
+    {"name": "pit 2", "pos": {"x": -1436.96, "y": -554.08, "z": 6.74}, "eye_pos": {"x": -1436.96, "y": -554.08, "z": 52.74}, "angles": {"pitch": -1.65, "yaw": 99.69, "roll": 0}, "type": "crouch"},
+    {"name": "short 1", "pos": {"x": -1841.62, "y": 384.84, "z": 301.03}, "eye_pos": {"x": -1841.62, "y": 384.84, "z": 347.03}, "angles": {"pitch": 10.31, "yaw": -40.63, "roll": 0}, "type": "crouch"},
+    {"name": "monster 1", "pos": {"x": -1809.03, "y": -319.98, "z": 132.03}, "eye_pos": {"x": -1809.03, "y": -319.98, "z": 178.03}, "angles": {"pitch": 5.3, "yaw": 8.1, "roll": 0}, "type": "crouch"},
+    {"name": "site 3", "pos": {"x": -1809.03, "y": -322.74, "z": 132.03}, "eye_pos": {"x": -1809.03, "y": -322.74, "z": 178.03}, "angles": {"pitch": 3.04, "yaw": 20.46, "roll": 0}, "type": "crouch"},
+    {"name": "tunnel 1", "pos": {"x": -1825.32, "y": -663.33, "z": 132.03}, "eye_pos": {"x": -1825.32, "y": -663.33, "z": 178.03}, "angles": {"pitch": 8.33, "yaw": -19.02, "roll": 0}, "type": "crouch"},
+    {"name": "short 2", "pos": {"x": -1615.96, "y": 188.98, "z": 70.96}, "eye_pos": {"x": -1615.96, "y": 188.98, "z": 116.96}, "angles": {"pitch": 1.59, "yaw": -46.22, "roll": 0}, "type": "crouch"},
+    {"name": "tracks 1", "pos": {"x": -1308.67, "y": 316.42, "z": 17.24}, "eye_pos": {"x": -1308.67, "y": 316.42, "z": 63.24}, "angles": {"pitch": 0.82, "yaw": -61.8, "roll": 0}, "type": "crouch"},
+    {"name": "tunnel 2", "pos": {"x": -1296.07, "y": 324.08, "z": 18.26}, "eye_pos": {"x": -1296.07, "y": 324.08, "z": 64.26}, "angles": {"pitch": 1.46, "yaw": -68.43, "roll": 0}, "type": "crouch"},
+    {"name": "monster 2", "pos": {"x": -1356.42, "y": 279.42, "z": 18.87}, "eye_pos": {"x": -1356.42, "y": 279.42, "z": 64.87}, "angles": {"pitch": 1.51, "yaw": -27.82, "roll": 0}, "type": "crouch"},
+    {"name": "alleuy 1", "pos": {"x": -1216.66, "y": -638.95, "z": 46.06}, "eye_pos": {"x": -1216.66, "y": -638.95, "z": 92.06}, "angles": {"pitch": -3.3, "yaw": -52.76, "roll": 0}, "type": "crouch"}
+  ]
+}
