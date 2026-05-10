@@ -69,6 +69,9 @@ ffi.cdef [[
     void* FindWindowA(const char* lpClassName, const char* lpWindowName);
     void* GetActiveWindow(void);
     void* GetForegroundWindow(void);
+    void* SetForegroundWindow(void* hWnd);
+    void* SetFocus(void*);
+    bool ShowWindow(void*, int);
     bool FlashWindow(void* hWnd, bool bInvert);
 ]]
 
@@ -349,6 +352,71 @@ local uix = {}; do
                 }
             end)
 
+            general.agent_changer = general:switch("Agent Changer", false, function(gear)
+                return {
+                    terrorist = gear:selectable("Terrorist", { "Getaway Sally | The Professionals",
+                        "Number K | The Professionals",
+                        "Little Kev | The Professionals",
+                        "Safecracker Voltzmann | The Professionals",
+                        "Bloody Darryl The Strapped | The Professionals",
+                        "Sir Bloody Loudmouth Darryl | The Professionals",
+                        "Sir Bloody Darryl Royale | The Professionals",
+                        "Sir Bloody Skullhead Darryl | The Professionals",
+                        "Sir Bloody Silent Darryl | The Professionals",
+                        "Sir Bloody Miami Darryl | The Professionals",
+                        "Street Soldier | Phoenix",
+                        "Soldier | Phoenix",
+                        "Slingshot | Phoenix",
+                        "Enforcer | Phoenix",
+                        "Mr. Muhlik | Elite Crew",
+                        "Prof. Shahmat | Elite Crew",
+                        "Osiris | Elite Crew",
+                        "Jungle Rebel | Elite Crew",
+                        "Ground Rebel | Elite Crew",
+                        "The Elite Mr. Muhlik | Elite Crew",
+                        "Trapper | Guerrilla Warfare",
+                        "Trapper Aggressor | Guerrilla Warfare",
+                        "Vypa Sista of the Revolution | Guerrilla Warfare",
+                        "Col. Mangos Dabisi | Guerrilla Warfare",
+                        "Arno The Overgrown | Guerrilla Warfare",
+                        "'Medium Rare' Crasswater | Guerrilla Warfare",
+                        "Crasswater The Forgotten | Guerrilla Warfare",
+                        "Elite Trapper Solman | Guerrilla Warfare",
+                        "'The Doctor' Romanov | Sabre",
+                        "Blackwolf | Sabre",
+                        "Maximus | Sabre",
+                        "Dragomir | Sabre",
+                        "Rezan The Ready | Sabre",
+                        "Rezan the Redshirt | Sabre",
+                        "Dragomir | Sabre Footsoldier",
+                        "Danger Zone | Variant A",
+                        "Danger Zone | Variant B",
+                        "Danger Zone | Variant C" }),
+                    ["c-terrorist"] = gear:selectable("C-Terrorist",
+                        { "Cmdr. Davida 'Goggles' Fernandez | SEAL Frogman",
+                            "Cmdr. Frank 'Wet Sox' Baroud | SEAL Frogman", "Lieutenant Rex Krikey | SEAL Frogman",
+                            "Michael Syfers | FBI Sniper", "Operator | FBI SWAT", "Special Agent Ava | FBI",
+                            "Markus Delrow | FBI HRT", "Sous-Lieutenant Medic | Gendarmerie Nationale",
+                            "Chem-Haz Capitaine | Gendarmerie Nationale",
+                            "Chef d'Escadron Rouchard | Gendarmerie Nationale", "Aspirant | Gendarmerie Nationale",
+                            "Officer Jacques Beltram | Gendarmerie Nationale", "D Squadron Officer | NZSAS",
+                            "B Squadron Officer | SAS", "Seal Team 6 Soldier | NSWC SEAL", "Buckshot | NSWC SEAL",
+                            "Lt. Commander Ricksaw | NSWC SEAL", "'Blueberries' Buckshot | NSWC SEAL",
+                            "3rd Commando Company | KSK", "'Two Times' McCoy | TACP Cavalry",
+                            "'Two Times' McCoy | USAF TACP", "Primeiro Tenente | Brazilian 1st Battalion",
+                            "Cmdr. Mae 'Dead Cold' Jamison | SWAT", "1st Lieutenant Farlow | SWAT",
+                            "John 'Van Healen' Kask | SWAT", "Bio-Haz Specialist | SWAT",
+                            "Sergeant Bombson | SWAT", "Chem-Haz Specialist | SWAT",
+                            "Lieutenant 'Tree Hugger' Farlow | SWAT" })
+                }
+            end)
+
+            -- general.skybox_changer = general:switch("Skybox Chagner", false, function (gear)
+            --     return {
+            --         skybox = gear:selectable("")
+            --     }
+            -- end)
+
             general.watermark_align = general:slider("Watermark align", 0, 2, 2)
             general.watermark_pos_x = general:slider("Watermark pos x", 0, screen.x, 0)
 
@@ -600,7 +668,7 @@ local uix = {}; do
             end)
             extra.edge_jump = extra:hotkey "Edge Jump"
             extra.removals = extra:selectable("Removals", { "Team Intro" }, true)
-            extra.flash_taskbar = extra:switch "Flash Taskbar"
+            extra.game_focus = extra:selectable("Game Focus", { "Disabled", "Flash Taskbar", "Auto Focus" })
             extra.switch_knife_hand = extra:switch("Switch Knife Hand", true)
             extra.ragdolls = extra:switch("Ragdolls", false, function(gear)
                 return {
@@ -2539,6 +2607,125 @@ local visuals = {}; do
         end
     end
 
+    local agent_changer = {}; do
+        local models = {
+            terrorist = {
+                ["Getaway Sally | The Professionals"] = "tm_professional/tm_professional_varj",
+                ["Number K | The Professionals"] = "tm_professional/tm_professional_vari",
+                ["Little Kev | The Professionals"] = "tm_professional/tm_professional_varh",
+                ["Safecracker Voltzmann | The Professionals"] = "tm_professional/tm_professional_varg",
+                ["Bloody Darryl The Strapped | The Professionals"] = "tm_professional/tm_professional_varf5",
+                ["Sir Bloody Loudmouth Darryl | The Professionals"] = "tm_professional/tm_professional_varf4",
+                ["Sir Bloody Darryl Royale | The Professionals"] = "tm_professional/tm_professional_varf3",
+                ["Sir Bloody Skullhead Darryl | The Professionals"] = "tm_professional/tm_professional_varf2",
+                ["Sir Bloody Silent Darryl | The Professionals"] = "tm_professional/tm_professional_varf1",
+                ["Sir Bloody Miami Darryl | The Professionals"] = "tm_professional/tm_professional_varf",
+
+                ["Street Soldier | Phoenix"] = "tm_phoenix/tm_phoenix_varianti",
+                ["Soldier | Phoenix"] = "tm_phoenix/tm_phoenix_varianth",
+                ["Slingshot | Phoenix"] = "tm_phoenix/tm_phoenix_variantg",
+                ["Enforcer | Phoenix"] = "tm_phoenix/tm_phoenix_variantf",
+
+                ["Mr. Muhlik | Elite Crew"] = "tm_leet/tm_leet_variantj",
+                ["Prof. Shahmat | Elite Crew"] = "tm_leet/tm_leet_varianti",
+                ["Osiris | Elite Crew"] = "tm_leet/tm_leet_varianth",
+                ["Jungle Rebel | Elite Crew"] = "tm_leet/tm_leet_variantj",
+                ["Ground Rebel | Elite Crew"] = "tm_leet/tm_leet_variantg",
+                ["The Elite Mr. Muhlik | Elite Crew"] = "tm_leet/tm_leet_variantf",
+
+                ["Trapper | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantf2",
+                ["Trapper Aggressor | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantf",
+                ["Vypa Sista of the Revolution | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variante",
+                ["Col. Mangos Dabisi | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantd",
+                ["Arno The Overgrown | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantc",
+                ["'Medium Rare' Crasswater | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantb2",
+                ["Crasswater The Forgotten | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantb",
+                ["Elite Trapper Solman | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_varianta",
+
+                ["'The Doctor' Romanov | Sabre"] = "tm_balkan/tm_balkan_varianth",
+                ["Blackwolf | Sabre"] = "tm_balkan/tm_balkan_variantj",
+                ["Maximus | Sabre"] = "tm_balkan/tm_balkan_varianti",
+                ["Dragomir | Sabre"] = "tm_balkan/tm_balkan_variantf",
+                ["Rezan The Ready | Sabre"] = "tm_balkan/tm_balkan_variantg",
+                ["Rezan the Redshirt | Sabre"] = "tm_balkan/tm_balkan_variantk",
+                ["Dragomir | Sabre Footsoldier"] = "tm_balkan/tm_balkan_variantl",
+
+                ["Danger Zone | Variant A"] = "tm_jumpsuit/tm_jumpsuit_varianta",
+                ["Danger Zone | Variant B"] = "tm_jumpsuit/tm_jumpsuit_variantb",
+                ["Danger Zone | Variant C"] = "tm_jumpsuit/tm_jumpsuit_variantc"
+            },
+            ["c-terrorist"] = {
+                ["Cmdr. Davida 'Goggles' Fernandez | SEAL Frogman"] = "ctm_diver/ctm_diver_varianta",
+                ["Cmdr. Frank 'Wet Sox' Baroud | SEAL Frogman"] = "ctm_diver/ctm_diver_variantb",
+                ["Lieutenant Rex Krikey | SEAL Frogman"] = "ctm_diver/ctm_diver_variantc",
+
+                ["Michael Syfers | FBI Sniper"] = "ctm_fbi/ctm_fbi_varianth",
+                ["Operator | FBI SWAT"] = "ctm_fbi/ctm_fbi_variantf",
+                ["Special Agent Ava | FBI"] = "ctm_fbi/ctm_fbi_variantb",
+                ["Markus Delrow | FBI HRT"] = "ctm_fbi/ctm_fbi_variantg",
+
+                ["Sous-Lieutenant Medic | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_varianta",
+                ["Chem-Haz Capitaine | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantb",
+                ["Chef d'Escadron Rouchard | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantc",
+                ["Aspirant | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantd",
+                ["Officer Jacques Beltram | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variante",
+
+                ["D Squadron Officer | NZSAS"] = "ctm_sas/ctm_sas_variantg",
+                ["B Squadron Officer | SAS"] = "ctm_sas/ctm_sas_variantf",
+
+                ["Seal Team 6 Soldier | NSWC SEAL"] = "ctm_st6/ctm_st6_variante",
+                ["Buckshot | NSWC SEAL"] = "ctm_st6/ctm_st6_variantg",
+                ["Lt. Commander Ricksaw | NSWC SEAL"] = "ctm_st6/ctm_st6_varianti",
+                ["'Blueberries' Buckshot | NSWC SEAL"] = "ctm_st6/ctm_st6_variantj",
+                ["3rd Commando Company | KSK"] = "ctm_st6/ctm_st6_variantk",
+                ["'Two Times' McCoy | TACP Cavalry"] = "ctm_st6/ctm_st6_variantl",
+                ["'Two Times' McCoy | USAF TACP"] = "ctm_st6/ctm_st6_variantm",
+                ["Primeiro Tenente | Brazilian 1st Battalion"] = "ctm_st6/ctm_st6_variantn",
+
+                ["Cmdr. Mae 'Dead Cold' Jamison | SWAT"] = "ctm_swat/ctm_swat_variante",
+                ["1st Lieutenant Farlow | SWAT"] = "ctm_swat/ctm_swat_variantf",
+                ["John 'Van Healen' Kask | SWAT"] = "ctm_swat/ctm_swat_variantg",
+                ["Bio-Haz Specialist | SWAT"] = "ctm_swat/ctm_swat_varianth",
+                ["Sergeant Bombson | SWAT"] = "ctm_swat/ctm_swat_varianti",
+                ["Chem-Haz Specialist | SWAT"] = "ctm_swat/ctm_swat_variantj",
+                ["Lieutenant 'Tree Hugger' Farlow | SWAT"] = "ctm_swat/ctm_swat_variantk"
+            }
+        }
+
+        local master = general.agent_changer
+
+        function agent_changer.frame_stage_notify(stage)
+            if stage ~= 6 then
+                return
+            end
+
+            if not master:get() then
+                return
+            end
+
+            local me = entitylist.get_local_player_pawn()
+
+            if not me or not me:is_alive() then
+                return
+            end
+
+            local team = ({
+                [2] = "terrorist",
+                [3] = "c-terrorist"
+            })[me.m_iTeamNum]
+
+            if not team then
+                return
+            end
+
+            local current_models = models[team]
+            local model = current_models[master[team]:get()]
+            local path = f("agents/models/%s.vmdl", model)
+
+            me:set_model(path)
+        end
+    end
+
     function visuals.paint()
         depth_of_field.paint()
         fog.paint()
@@ -2577,6 +2764,10 @@ local visuals = {}; do
         scope_overlay.unload()
         world_effects.unload()
         depth_of_field.unload()
+    end
+
+    function visuals.frame_stage_notify(stage)
+        agent_changer.frame_stage_notify(stage)
     end
 end
 
@@ -2883,17 +3074,48 @@ local settings = {}; do
         end
     end
 
-    local flash_taskbar = {}; do
-        local master = extra.flash_taskbar
+    local game_focus = {}; do
+        local master = extra.game_focus
 
-        function flash_taskbar.round_start()
-            if not master:get() then
+        function game_focus.round_start()
+            local choice = master:get()
+            if choice == "Disabled" then
                 return
             end
 
             local hwnd = utils.get_cs2_hwnd()
-            if hwnd ~= nil then
+            local is_in_game = utils.is_cs2_foreground()
+
+            if not hwnd then
+                return
+            end
+
+            if is_in_game then
+                return
+            end
+
+            if choice == "Flash Taskbar" then
                 ffi.C.FlashWindow(hwnd, true)
+            elseif choice == "Auto Focus" then
+                --- @credits: salvatore
+                local me = entitylist.get_local_player_pawn()
+
+                if not me then
+                    return
+                end
+
+                local rules = entitylist.get_game_rules()
+
+                if rules.m_bWarmupPeriod or me.m_iTeamNum ~= 2 or me.m_iTeamNum ~= 3 then
+                    return
+                end
+
+                ffi.C.ShowWindow(hwnd, 6);
+                ffi.C.ShowWindow(hwnd, 9);
+                ffi.C.SetForegroundWindow(hwnd);
+                ffi.C.SetFocus(hwnd);
+
+                engine.execute_client_cmd("hideconsole")
             end
         end
     end
@@ -2974,7 +3196,7 @@ local settings = {}; do
     end
 
     function settings.round_start()
-        flash_taskbar.round_start()
+        game_focus.round_start()
     end
 
     function settings.createmove(cmd)
@@ -3006,6 +3228,10 @@ local settings = {}; do
         auto_buy.player_spawn(e)
     end
 end
+
+events.frame_stage_notify:set(function(stage)
+    visuals.frame_stage_notify(stage)
+end)
 
 events.paint:set(function()
     threat = entity.get_threat()
@@ -4241,7 +4467,23 @@ function base_entity_t:get_velocity()
 end
 
 function base_entity_t:set_model(path)
+    local ptr = ffi.cast("uintptr_t*", self[m_pCollision])[0]
+
+    if ptr == 0 then
+        set_model(self[0], path)
+        return
+    end
+
+    local mins = ffi.cast("float*", ptr + m_vecMins)
+    local maxs = ffi.cast("float*", ptr + m_vecMaxs)
+
+    local mins_x, mins_y, mins_z = mins[0], mins[1], mins[2]
+    local maxs_x, maxs_y, maxs_z = maxs[0], maxs[1], maxs[2]
+
     set_model(self[0], path)
+
+    mins[0], mins[1], mins[2] = mins_x, mins_y, mins_z
+    maxs[0], maxs[1], maxs[2] = maxs_x, maxs_y, maxs_z
 end
 
 function entity.get_players(enemy_only, include_dead, callback)
@@ -9143,8 +9385,9 @@ local events, debug_enabled = {}, _DEBUG; do
             call_handlers("frame_stage_notify", stage)
         end
 
-        return o_fn(source2client, stage)
+        o_fn(source2client, stage)
     end
+
 
     local function hkLevelInit(o_fn, a1, mapname)
         if mapname then
@@ -9163,7 +9406,7 @@ local events, debug_enabled = {}, _DEBUG; do
     end
 
     create_hook(fnRunPrediction, hkRunPrediction, "void(__fastcall*)(void*, int)")
-    create_hook(fnCreateMove, hkCreateMove, "void(__fastcall*)(void*, int, uint8_t)") -- .. prob fixed idk need to check later
+    create_hook(fnCreateMove, hkCreateMove, "void(__fastcall*)(void*, int, uint8_t)")
     create_hook(fnTeamIntro, hkTeamIntro, "void(__fastcall*)(void*, void*, void*)")
     create_hook(fnLevelShutdown, hkShutdown, "void(__fastcall*)(void*, void*)")
     create_hook(fnScopeOverlay, hkScopeOverlay, "void(__fastcall*)(void*, void*)")
@@ -9180,7 +9423,7 @@ local events, debug_enabled = {}, _DEBUG; do
     --     return o_fn(a1, a2, a3, a4, a5, a6)
     -- end, "__int64(*)(void*, unsigned int, int, void*, const char*, void*)")
     -- create_hook(fnOverrideView, hkOverrideView, "void(__fastcall*)(void*, void*)")
-    -- create_hook(fnFrameStageNotify, hkFrameStageNotify, "void(__fastcall*)(void*, int)")
+    create_hook(fnFrameStageNotify, hkFrameStageNotify, "void(__fastcall*)(void*, int)")
     create_hook(fnLevelInit, hkLevelInit, "void*(__fastcall*)(void*, const char*)")
 
 
