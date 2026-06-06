@@ -154,7 +154,7 @@ f = string.format
 
 script_name = "demonside"
 branch = get_user_name() == "sqwat1337" and "debug" or "release"
-_DEBUG = false
+_DEBUG = true
 
 local logging = require("core/logging")
 
@@ -352,64 +352,64 @@ local uix = {}; do
                 }
             end)
 
-            general.agent_changer = general:switch("Agent Changer", false, function(gear)
-                return {
-                    terrorist = gear:selectable("Terrorist", { "Getaway Sally | The Professionals",
-                        "Number K | The Professionals",
-                        "Little Kev | The Professionals",
-                        "Safecracker Voltzmann | The Professionals",
-                        "Bloody Darryl The Strapped | The Professionals",
-                        "Sir Bloody Loudmouth Darryl | The Professionals",
-                        "Sir Bloody Darryl Royale | The Professionals",
-                        "Sir Bloody Skullhead Darryl | The Professionals",
-                        "Sir Bloody Silent Darryl | The Professionals",
-                        "Sir Bloody Miami Darryl | The Professionals",
-                        "Street Soldier | Phoenix",
-                        "Soldier | Phoenix",
-                        "Slingshot | Phoenix",
-                        "Enforcer | Phoenix",
-                        "Mr. Muhlik | Elite Crew",
-                        "Prof. Shahmat | Elite Crew",
-                        "Osiris | Elite Crew",
-                        "Jungle Rebel | Elite Crew",
-                        "Ground Rebel | Elite Crew",
-                        "The Elite Mr. Muhlik | Elite Crew",
-                        "Trapper | Guerrilla Warfare",
-                        "Trapper Aggressor | Guerrilla Warfare",
-                        "Vypa Sista of the Revolution | Guerrilla Warfare",
-                        "Col. Mangos Dabisi | Guerrilla Warfare",
-                        "Arno The Overgrown | Guerrilla Warfare",
-                        "'Medium Rare' Crasswater | Guerrilla Warfare",
-                        "Crasswater The Forgotten | Guerrilla Warfare",
-                        "Elite Trapper Solman | Guerrilla Warfare",
-                        "'The Doctor' Romanov | Sabre",
-                        "Blackwolf | Sabre",
-                        "Maximus | Sabre",
-                        "Dragomir | Sabre",
-                        "Rezan The Ready | Sabre",
-                        "Rezan the Redshirt | Sabre",
-                        "Dragomir | Sabre Footsoldier",
-                        "Danger Zone | Variant A",
-                        "Danger Zone | Variant B",
-                        "Danger Zone | Variant C" }),
-                    ["c-terrorist"] = gear:selectable("C-Terrorist",
-                        { "Cmdr. Davida 'Goggles' Fernandez | SEAL Frogman",
-                            "Cmdr. Frank 'Wet Sox' Baroud | SEAL Frogman", "Lieutenant Rex Krikey | SEAL Frogman",
-                            "Michael Syfers | FBI Sniper", "Operator | FBI SWAT", "Special Agent Ava | FBI",
-                            "Markus Delrow | FBI HRT", "Sous-Lieutenant Medic | Gendarmerie Nationale",
-                            "Chem-Haz Capitaine | Gendarmerie Nationale",
-                            "Chef d'Escadron Rouchard | Gendarmerie Nationale", "Aspirant | Gendarmerie Nationale",
-                            "Officer Jacques Beltram | Gendarmerie Nationale", "D Squadron Officer | NZSAS",
-                            "B Squadron Officer | SAS", "Seal Team 6 Soldier | NSWC SEAL", "Buckshot | NSWC SEAL",
-                            "Lt. Commander Ricksaw | NSWC SEAL", "'Blueberries' Buckshot | NSWC SEAL",
-                            "3rd Commando Company | KSK", "'Two Times' McCoy | TACP Cavalry",
-                            "'Two Times' McCoy | USAF TACP", "Primeiro Tenente | Brazilian 1st Battalion",
-                            "Cmdr. Mae 'Dead Cold' Jamison | SWAT", "1st Lieutenant Farlow | SWAT",
-                            "John 'Van Healen' Kask | SWAT", "Bio-Haz Specialist | SWAT",
-                            "Sergeant Bombson | SWAT", "Chem-Haz Specialist | SWAT",
-                            "Lieutenant 'Tree Hugger' Farlow | SWAT" })
-                }
-            end)
+            -- general.agent_changer = general:switch("Agent Changer", false, function(gear)
+            --     return {
+            --         terrorist = gear:selectable("Terrorist", { "Getaway Sally | The Professionals",
+            --             "Number K | The Professionals",
+            --             "Little Kev | The Professionals",
+            --             "Safecracker Voltzmann | The Professionals",
+            --             "Bloody Darryl The Strapped | The Professionals",
+            --             "Sir Bloody Loudmouth Darryl | The Professionals",
+            --             "Sir Bloody Darryl Royale | The Professionals",
+            --             "Sir Bloody Skullhead Darryl | The Professionals",
+            --             "Sir Bloody Silent Darryl | The Professionals",
+            --             "Sir Bloody Miami Darryl | The Professionals",
+            --             "Street Soldier | Phoenix",
+            --             "Soldier | Phoenix",
+            --             "Slingshot | Phoenix",
+            --             "Enforcer | Phoenix",
+            --             "Mr. Muhlik | Elite Crew",
+            --             "Prof. Shahmat | Elite Crew",
+            --             "Osiris | Elite Crew",
+            --             "Jungle Rebel | Elite Crew",
+            --             "Ground Rebel | Elite Crew",
+            --             "The Elite Mr. Muhlik | Elite Crew",
+            --             "Trapper | Guerrilla Warfare",
+            --             "Trapper Aggressor | Guerrilla Warfare",
+            --             "Vypa Sista of the Revolution | Guerrilla Warfare",
+            --             "Col. Mangos Dabisi | Guerrilla Warfare",
+            --             "Arno The Overgrown | Guerrilla Warfare",
+            --             "'Medium Rare' Crasswater | Guerrilla Warfare",
+            --             "Crasswater The Forgotten | Guerrilla Warfare",
+            --             "Elite Trapper Solman | Guerrilla Warfare",
+            --             "'The Doctor' Romanov | Sabre",
+            --             "Blackwolf | Sabre",
+            --             "Maximus | Sabre",
+            --             "Dragomir | Sabre",
+            --             "Rezan The Ready | Sabre",
+            --             "Rezan the Redshirt | Sabre",
+            --             "Dragomir | Sabre Footsoldier",
+            --             "Danger Zone | Variant A",
+            --             "Danger Zone | Variant B",
+            --             "Danger Zone | Variant C" }),
+            --         ["c-terrorist"] = gear:selectable("C-Terrorist",
+            --             { "Cmdr. Davida 'Goggles' Fernandez | SEAL Frogman",
+            --                 "Cmdr. Frank 'Wet Sox' Baroud | SEAL Frogman", "Lieutenant Rex Krikey | SEAL Frogman",
+            --                 "Michael Syfers | FBI Sniper", "Operator | FBI SWAT", "Special Agent Ava | FBI",
+            --                 "Markus Delrow | FBI HRT", "Sous-Lieutenant Medic | Gendarmerie Nationale",
+            --                 "Chem-Haz Capitaine | Gendarmerie Nationale",
+            --                 "Chef d'Escadron Rouchard | Gendarmerie Nationale", "Aspirant | Gendarmerie Nationale",
+            --                 "Officer Jacques Beltram | Gendarmerie Nationale", "D Squadron Officer | NZSAS",
+            --                 "B Squadron Officer | SAS", "Seal Team 6 Soldier | NSWC SEAL", "Buckshot | NSWC SEAL",
+            --                 "Lt. Commander Ricksaw | NSWC SEAL", "'Blueberries' Buckshot | NSWC SEAL",
+            --                 "3rd Commando Company | KSK", "'Two Times' McCoy | TACP Cavalry",
+            --                 "'Two Times' McCoy | USAF TACP", "Primeiro Tenente | Brazilian 1st Battalion",
+            --                 "Cmdr. Mae 'Dead Cold' Jamison | SWAT", "1st Lieutenant Farlow | SWAT",
+            --                 "John 'Van Healen' Kask | SWAT", "Bio-Haz Specialist | SWAT",
+            --                 "Sergeant Bombson | SWAT", "Chem-Haz Specialist | SWAT",
+            --                 "Lieutenant 'Tree Hugger' Farlow | SWAT" })
+            --     }
+            -- end)
 
             -- general.skybox_changer = general:switch("Skybox Chagner", false, function (gear)
             --     return {
@@ -2607,124 +2607,124 @@ local visuals = {}; do
         end
     end
 
-    local agent_changer = {}; do
-        local models = {
-            terrorist = {
-                ["Getaway Sally | The Professionals"] = "tm_professional/tm_professional_varj",
-                ["Number K | The Professionals"] = "tm_professional/tm_professional_vari",
-                ["Little Kev | The Professionals"] = "tm_professional/tm_professional_varh",
-                ["Safecracker Voltzmann | The Professionals"] = "tm_professional/tm_professional_varg",
-                ["Bloody Darryl The Strapped | The Professionals"] = "tm_professional/tm_professional_varf5",
-                ["Sir Bloody Loudmouth Darryl | The Professionals"] = "tm_professional/tm_professional_varf4",
-                ["Sir Bloody Darryl Royale | The Professionals"] = "tm_professional/tm_professional_varf3",
-                ["Sir Bloody Skullhead Darryl | The Professionals"] = "tm_professional/tm_professional_varf2",
-                ["Sir Bloody Silent Darryl | The Professionals"] = "tm_professional/tm_professional_varf1",
-                ["Sir Bloody Miami Darryl | The Professionals"] = "tm_professional/tm_professional_varf",
+    -- local agent_changer = {}; do
+    --     local models = {
+    --         terrorist = {
+    --             ["Getaway Sally | The Professionals"] = "tm_professional/tm_professional_varj",
+    --             ["Number K | The Professionals"] = "tm_professional/tm_professional_vari",
+    --             ["Little Kev | The Professionals"] = "tm_professional/tm_professional_varh",
+    --             ["Safecracker Voltzmann | The Professionals"] = "tm_professional/tm_professional_varg",
+    --             ["Bloody Darryl The Strapped | The Professionals"] = "tm_professional/tm_professional_varf5",
+    --             ["Sir Bloody Loudmouth Darryl | The Professionals"] = "tm_professional/tm_professional_varf4",
+    --             ["Sir Bloody Darryl Royale | The Professionals"] = "tm_professional/tm_professional_varf3",
+    --             ["Sir Bloody Skullhead Darryl | The Professionals"] = "tm_professional/tm_professional_varf2",
+    --             ["Sir Bloody Silent Darryl | The Professionals"] = "tm_professional/tm_professional_varf1",
+    --             ["Sir Bloody Miami Darryl | The Professionals"] = "tm_professional/tm_professional_varf",
 
-                ["Street Soldier | Phoenix"] = "tm_phoenix/tm_phoenix_varianti",
-                ["Soldier | Phoenix"] = "tm_phoenix/tm_phoenix_varianth",
-                ["Slingshot | Phoenix"] = "tm_phoenix/tm_phoenix_variantg",
-                ["Enforcer | Phoenix"] = "tm_phoenix/tm_phoenix_variantf",
+    --             ["Street Soldier | Phoenix"] = "tm_phoenix/tm_phoenix_varianti",
+    --             ["Soldier | Phoenix"] = "tm_phoenix/tm_phoenix_varianth",
+    --             ["Slingshot | Phoenix"] = "tm_phoenix/tm_phoenix_variantg",
+    --             ["Enforcer | Phoenix"] = "tm_phoenix/tm_phoenix_variantf",
 
-                ["Mr. Muhlik | Elite Crew"] = "tm_leet/tm_leet_variantj",
-                ["Prof. Shahmat | Elite Crew"] = "tm_leet/tm_leet_varianti",
-                ["Osiris | Elite Crew"] = "tm_leet/tm_leet_varianth",
-                ["Jungle Rebel | Elite Crew"] = "tm_leet/tm_leet_variantj",
-                ["Ground Rebel | Elite Crew"] = "tm_leet/tm_leet_variantg",
-                ["The Elite Mr. Muhlik | Elite Crew"] = "tm_leet/tm_leet_variantf",
+    --             ["Mr. Muhlik | Elite Crew"] = "tm_leet/tm_leet_variantj",
+    --             ["Prof. Shahmat | Elite Crew"] = "tm_leet/tm_leet_varianti",
+    --             ["Osiris | Elite Crew"] = "tm_leet/tm_leet_varianth",
+    --             ["Jungle Rebel | Elite Crew"] = "tm_leet/tm_leet_variantj",
+    --             ["Ground Rebel | Elite Crew"] = "tm_leet/tm_leet_variantg",
+    --             ["The Elite Mr. Muhlik | Elite Crew"] = "tm_leet/tm_leet_variantf",
 
-                ["Trapper | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantf2",
-                ["Trapper Aggressor | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantf",
-                ["Vypa Sista of the Revolution | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variante",
-                ["Col. Mangos Dabisi | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantd",
-                ["Arno The Overgrown | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantc",
-                ["'Medium Rare' Crasswater | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantb2",
-                ["Crasswater The Forgotten | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantb",
-                ["Elite Trapper Solman | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_varianta",
+    --             ["Trapper | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantf2",
+    --             ["Trapper Aggressor | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantf",
+    --             ["Vypa Sista of the Revolution | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variante",
+    --             ["Col. Mangos Dabisi | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantd",
+    --             ["Arno The Overgrown | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantc",
+    --             ["'Medium Rare' Crasswater | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantb2",
+    --             ["Crasswater The Forgotten | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantb",
+    --             ["Elite Trapper Solman | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_varianta",
 
-                ["'The Doctor' Romanov | Sabre"] = "tm_balkan/tm_balkan_varianth",
-                ["Blackwolf | Sabre"] = "tm_balkan/tm_balkan_variantj",
-                ["Maximus | Sabre"] = "tm_balkan/tm_balkan_varianti",
-                ["Dragomir | Sabre"] = "tm_balkan/tm_balkan_variantf",
-                ["Rezan The Ready | Sabre"] = "tm_balkan/tm_balkan_variantg",
-                ["Rezan the Redshirt | Sabre"] = "tm_balkan/tm_balkan_variantk",
-                ["Dragomir | Sabre Footsoldier"] = "tm_balkan/tm_balkan_variantl",
+    --             ["'The Doctor' Romanov | Sabre"] = "tm_balkan/tm_balkan_varianth",
+    --             ["Blackwolf | Sabre"] = "tm_balkan/tm_balkan_variantj",
+    --             ["Maximus | Sabre"] = "tm_balkan/tm_balkan_varianti",
+    --             ["Dragomir | Sabre"] = "tm_balkan/tm_balkan_variantf",
+    --             ["Rezan The Ready | Sabre"] = "tm_balkan/tm_balkan_variantg",
+    --             ["Rezan the Redshirt | Sabre"] = "tm_balkan/tm_balkan_variantk",
+    --             ["Dragomir | Sabre Footsoldier"] = "tm_balkan/tm_balkan_variantl",
 
-                ["Danger Zone | Variant A"] = "tm_jumpsuit/tm_jumpsuit_varianta",
-                ["Danger Zone | Variant B"] = "tm_jumpsuit/tm_jumpsuit_variantb",
-                ["Danger Zone | Variant C"] = "tm_jumpsuit/tm_jumpsuit_variantc"
-            },
-            ["c-terrorist"] = {
-                ["Cmdr. Davida 'Goggles' Fernandez | SEAL Frogman"] = "ctm_diver/ctm_diver_varianta",
-                ["Cmdr. Frank 'Wet Sox' Baroud | SEAL Frogman"] = "ctm_diver/ctm_diver_variantb",
-                ["Lieutenant Rex Krikey | SEAL Frogman"] = "ctm_diver/ctm_diver_variantc",
+    --             ["Danger Zone | Variant A"] = "tm_jumpsuit/tm_jumpsuit_varianta",
+    --             ["Danger Zone | Variant B"] = "tm_jumpsuit/tm_jumpsuit_variantb",
+    --             ["Danger Zone | Variant C"] = "tm_jumpsuit/tm_jumpsuit_variantc"
+    --         },
+    --         ["c-terrorist"] = {
+    --             ["Cmdr. Davida 'Goggles' Fernandez | SEAL Frogman"] = "ctm_diver/ctm_diver_varianta",
+    --             ["Cmdr. Frank 'Wet Sox' Baroud | SEAL Frogman"] = "ctm_diver/ctm_diver_variantb",
+    --             ["Lieutenant Rex Krikey | SEAL Frogman"] = "ctm_diver/ctm_diver_variantc",
 
-                ["Michael Syfers | FBI Sniper"] = "ctm_fbi/ctm_fbi_varianth",
-                ["Operator | FBI SWAT"] = "ctm_fbi/ctm_fbi_variantf",
-                ["Special Agent Ava | FBI"] = "ctm_fbi/ctm_fbi_variantb",
-                ["Markus Delrow | FBI HRT"] = "ctm_fbi/ctm_fbi_variantg",
+    --             ["Michael Syfers | FBI Sniper"] = "ctm_fbi/ctm_fbi_varianth",
+    --             ["Operator | FBI SWAT"] = "ctm_fbi/ctm_fbi_variantf",
+    --             ["Special Agent Ava | FBI"] = "ctm_fbi/ctm_fbi_variantb",
+    --             ["Markus Delrow | FBI HRT"] = "ctm_fbi/ctm_fbi_variantg",
 
-                ["Sous-Lieutenant Medic | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_varianta",
-                ["Chem-Haz Capitaine | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantb",
-                ["Chef d'Escadron Rouchard | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantc",
-                ["Aspirant | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantd",
-                ["Officer Jacques Beltram | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variante",
+    --             ["Sous-Lieutenant Medic | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_varianta",
+    --             ["Chem-Haz Capitaine | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantb",
+    --             ["Chef d'Escadron Rouchard | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantc",
+    --             ["Aspirant | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantd",
+    --             ["Officer Jacques Beltram | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variante",
 
-                ["D Squadron Officer | NZSAS"] = "ctm_sas/ctm_sas_variantg",
-                ["B Squadron Officer | SAS"] = "ctm_sas/ctm_sas_variantf",
+    --             ["D Squadron Officer | NZSAS"] = "ctm_sas/ctm_sas_variantg",
+    --             ["B Squadron Officer | SAS"] = "ctm_sas/ctm_sas_variantf",
 
-                ["Seal Team 6 Soldier | NSWC SEAL"] = "ctm_st6/ctm_st6_variante",
-                ["Buckshot | NSWC SEAL"] = "ctm_st6/ctm_st6_variantg",
-                ["Lt. Commander Ricksaw | NSWC SEAL"] = "ctm_st6/ctm_st6_varianti",
-                ["'Blueberries' Buckshot | NSWC SEAL"] = "ctm_st6/ctm_st6_variantj",
-                ["3rd Commando Company | KSK"] = "ctm_st6/ctm_st6_variantk",
-                ["'Two Times' McCoy | TACP Cavalry"] = "ctm_st6/ctm_st6_variantl",
-                ["'Two Times' McCoy | USAF TACP"] = "ctm_st6/ctm_st6_variantm",
-                ["Primeiro Tenente | Brazilian 1st Battalion"] = "ctm_st6/ctm_st6_variantn",
+    --             ["Seal Team 6 Soldier | NSWC SEAL"] = "ctm_st6/ctm_st6_variante",
+    --             ["Buckshot | NSWC SEAL"] = "ctm_st6/ctm_st6_variantg",
+    --             ["Lt. Commander Ricksaw | NSWC SEAL"] = "ctm_st6/ctm_st6_varianti",
+    --             ["'Blueberries' Buckshot | NSWC SEAL"] = "ctm_st6/ctm_st6_variantj",
+    --             ["3rd Commando Company | KSK"] = "ctm_st6/ctm_st6_variantk",
+    --             ["'Two Times' McCoy | TACP Cavalry"] = "ctm_st6/ctm_st6_variantl",
+    --             ["'Two Times' McCoy | USAF TACP"] = "ctm_st6/ctm_st6_variantm",
+    --             ["Primeiro Tenente | Brazilian 1st Battalion"] = "ctm_st6/ctm_st6_variantn",
 
-                ["Cmdr. Mae 'Dead Cold' Jamison | SWAT"] = "ctm_swat/ctm_swat_variante",
-                ["1st Lieutenant Farlow | SWAT"] = "ctm_swat/ctm_swat_variantf",
-                ["John 'Van Healen' Kask | SWAT"] = "ctm_swat/ctm_swat_variantg",
-                ["Bio-Haz Specialist | SWAT"] = "ctm_swat/ctm_swat_varianth",
-                ["Sergeant Bombson | SWAT"] = "ctm_swat/ctm_swat_varianti",
-                ["Chem-Haz Specialist | SWAT"] = "ctm_swat/ctm_swat_variantj",
-                ["Lieutenant 'Tree Hugger' Farlow | SWAT"] = "ctm_swat/ctm_swat_variantk"
-            }
-        }
+    --             ["Cmdr. Mae 'Dead Cold' Jamison | SWAT"] = "ctm_swat/ctm_swat_variante",
+    --             ["1st Lieutenant Farlow | SWAT"] = "ctm_swat/ctm_swat_variantf",
+    --             ["John 'Van Healen' Kask | SWAT"] = "ctm_swat/ctm_swat_variantg",
+    --             ["Bio-Haz Specialist | SWAT"] = "ctm_swat/ctm_swat_varianth",
+    --             ["Sergeant Bombson | SWAT"] = "ctm_swat/ctm_swat_varianti",
+    --             ["Chem-Haz Specialist | SWAT"] = "ctm_swat/ctm_swat_variantj",
+    --             ["Lieutenant 'Tree Hugger' Farlow | SWAT"] = "ctm_swat/ctm_swat_variantk"
+    --         }
+    --     }
 
-        local master = general.agent_changer
+    --     local master = general.agent_changer
 
-        function agent_changer.frame_stage_notify(stage)
-            if stage ~= 6 then
-                return
-            end
+    --     function agent_changer.frame_stage_notify(stage)
+    --         if stage ~= 6 then
+    --             return
+    --         end
 
-            if not master:get() then
-                return
-            end
+    --         if not master:get() then
+    --             return
+    --         end
 
-            local me = entitylist.get_local_player_pawn()
+    --         local me = entitylist.get_local_player_pawn()
 
-            if not me or not me:is_alive() then
-                return
-            end
+    --         if not me or not me:is_alive() then
+    --             return
+    --         end
 
-            local team = ({
-                [2] = "terrorist",
-                [3] = "c-terrorist"
-            })[me.m_iTeamNum]
+    --         local team = ({
+    --             [2] = "terrorist",
+    --             [3] = "c-terrorist"
+    --         })[me.m_iTeamNum]
 
-            if not team then
-                return
-            end
+    --         if not team then
+    --             return
+    --         end
 
-            local current_models = models[team]
-            local model = current_models[master[team]:get()]
-            local path = f("agents/models/%s.vmdl", model)
+    --         local current_models = models[team]
+    --         local model = current_models[master[team]:get()]
+    --         local path = f("agents/models/%s.vmdl", model)
 
-            me:set_model(path)
-        end
-    end
+    --         me:set_model(path)
+    --     end
+    -- end
 
     function visuals.paint()
         depth_of_field.paint()
@@ -2767,7 +2767,7 @@ local visuals = {}; do
     end
 
     function visuals.frame_stage_notify(stage)
-        agent_changer.frame_stage_notify(stage)
+        -- agent_changer.frame_stage_notify(stage)
     end
 end
 
@@ -3501,6 +3501,12 @@ end)
 __bundle_register("engine/vmt", function(require, _LOADED, __bundle_register, __bundle_modules)
 local vmt = {}
 
+local hooks = {}
+
+ffi.cdef[[
+    int VirtualProtect(void* lpAddress, size_t dwSize, uint32_t flNewProtect, uint32_t* lpflOldProtect);
+]]
+
 function vmt.get_v_method(class_, index)
     if class_ == nil then
         return nil
@@ -3526,7 +3532,58 @@ function vmt.call_virtual(class_, index, ...)
     return ffi_func(class_, unpack(args))
 end
 
+function vmt.hook(class_, index, callback, type_name)
+    if class_ == nil then return nil end
+    
+    local vtable = ffi.cast("uintptr_t**", class_)[0]
+    if vtable == nil then return nil end
+    
+    local original = vtable[index]
+    local original_fn = ffi.cast(type_name, original)
+    
+    -- Create a wrapper that passes original_fn as the first argument
+    local wrapper = function(...)
+        return callback(original_fn, ...)
+    end
+    
+    local callback_fn = ffi.cast(type_name, wrapper)
+    
+    local old_protect = ffi.new("uint32_t[1]")
+    if ffi.C.VirtualProtect(vtable + index, 8, 0x40, old_protect) ~= 0 then
+        vtable[index] = ffi.cast("uintptr_t", callback_fn)
+        ffi.C.VirtualProtect(vtable + index, 8, old_protect[0], old_protect)
+        
+        local hook_obj = {
+            vtable = vtable,
+            index = index,
+            original = original,
+            callback = callback_fn -- prevent GC
+        }
+        
+        table.insert(hooks, hook_obj)
+        return original_fn
+    end
+    
+    return nil
+end
+
+function vmt.unhook_all()
+    for _, hook in ipairs(hooks) do
+        local old_protect = ffi.new("uint32_t[1]")
+        if ffi.C.VirtualProtect(hook.vtable + hook.index, 8, 0x40, old_protect) ~= 0 then
+            hook.vtable[hook.index] = hook.original
+            ffi.C.VirtualProtect(hook.vtable + hook.index, 8, old_protect[0], old_protect)
+        end
+    end
+    hooks = {}
+end
+
+register_callback("unload", function()
+    vmt.unhook_all()
+end)
+
 return vmt
+
 end)
 __bundle_register("engine/cmd_button_t", function(require, _LOADED, __bundle_register, __bundle_modules)
 local keybind_t = {}; do
@@ -9082,11 +9139,11 @@ local events, debug_enabled = {}, _DEBUG; do
     -- котакбасина туда встань
     -- local fnOverrideView = assert(opcode_scan("client.dll", "48 89 5C 24 10 55 48 8D 6C 24 A9 48 81 EC B0 00 00 00"), "fnOverrideView outdated") -- // ClientModeShared > 15
     local fnFrameStageNotify = vmt.get_v_method(Source2Client002, 36) -- // @xref: STR: "Client Restore Server State", "FrameNetUpdate(%.3f %d)", "FramePostDataUpdate(%.3f %d)", "C:\buildworker\csgo_rel_win64\build\src\game\client\cdll_client_int.cpp"
-    local fnLevelInit = assert(
-        utils.get_abs_address(opcode_scan("client.dll", "E8 ?? ?? ?? ?? C6 83 34 02 00 00 01"), 1, 0),
-        "fnLevelInit outdated") -- // @xref: game_newmap, mapname
+    local fnLevelInit = assert(find_pattern("client.dll", "40 55 56 41 56 48 8D 6C 24 ? 48 81 EC ? ? ? ? 48 8B 0D"),
+        "fnLevelInit outdated")                                       -- // @xref: game_newmap, mapname
     local fnLevelShutdown = assert(
-        utils.get_abs_address(opcode_scan("client.dll", "E8 ?? ?? ?? ?? 48 8D 8F C8 01 00 00 33 F6"), 1, 0),
+        find_pattern("client.dll",
+            "48 83 EC ? 48 8B 0D ? ? ? ? 48 8D 15 ? ? ? ? 45 33 C9 45 33 C0 ? ? ? FF 50 ? 48 85 C0 74 ? 48 8B 0D ? ? ? ? 48 8B D0 ? ? ? 41 FF 50 ? 48 83 C4"),
         "fnLevelShutdown outdated") -- // @xref: mapshutdown
 
     local events_data = {
@@ -9405,10 +9462,9 @@ local events, debug_enabled = {}, _DEBUG; do
         return o_fn(a1)
     end
 
-    create_hook(fnRunPrediction, hkRunPrediction, "void(__fastcall*)(void*, int)")
+    -- create_hook(fnRunPrediction, hkRunPrediction, "void(__fastcall*)(void*, int)")
     create_hook(fnCreateMove, hkCreateMove, "void(__fastcall*)(void*, int, uint8_t)")
     create_hook(fnTeamIntro, hkTeamIntro, "void(__fastcall*)(void*, void*, void*)")
-    create_hook(fnLevelShutdown, hkShutdown, "void(__fastcall*)(void*, void*)")
     create_hook(fnScopeOverlay, hkScopeOverlay, "void(__fastcall*)(void*, void*)")
 
     --     return o_fn(a1, a2, a3, a4, a5)
@@ -9423,20 +9479,31 @@ local events, debug_enabled = {}, _DEBUG; do
     --     return o_fn(a1, a2, a3, a4, a5, a6)
     -- end, "__int64(*)(void*, unsigned int, int, void*, const char*, void*)")
     -- create_hook(fnOverrideView, hkOverrideView, "void(__fastcall*)(void*, void*)")
-    create_hook(fnFrameStageNotify, hkFrameStageNotify, "void(__fastcall*)(void*, int)")
+    -- vmt.hook(Source2Client002, 36, function(o_fn, this, stage)
+    --     if engine.get_level_name():find("empty") then
+    --         return o_fn(this, stage)
+    --     end
+
+    --     if stage then
+    --         call_handlers("frame_stage_notify", stage)
+    --     end
+
+    --     o_fn(this, stage)
+    -- end, "void(__fastcall*)(void*, int)")
+    create_hook(fnLevelShutdown, hkShutdown, "void(__fastcall*)(void*, void*)")
     create_hook(fnLevelInit, hkLevelInit, "void*(__fastcall*)(void*, const char*)")
 
 
     local hooked_events = {
-        -- "createmove",
+        "createmove",
         "team_intro",
-        "run_prediction",
+        -- "run_prediction",
         "scope_overlay",
         -- "override_view",
         "frame_stage_notify",
         -- "should_draw_legs",
         "level_init",
-        "log_system"
+        -- "log_system"
     }
 
     local function create_event_handler(event_name)
