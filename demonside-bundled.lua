@@ -2260,13 +2260,7 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                 ["Taser"] = "particles/blood_impact/impact_taser_bodyfx.vpcf",
             }
 
-            local fnPlayEffect = assert(
-                find_pattern("client.dll", "48 89 5C 24 ? 48 89 7C 24 ? 55 41 56"),
-                "fnPlayEffect outdated"); do
-                fnPlayEffect = ffi.cast(
-                    "void (__fastcall *)(const char*, int, uintptr_t, char, int, char, unsigned int, int, char)",
-                    fnPlayEffect)
-            end
+            local active_effects = {}
 
             function kill_effect.player_death(e)
                 if not master:get() then
@@ -2277,7 +2271,7 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                 local victim = e:get_pawn("userid")
                 local attacker = e:get_pawn("attacker")
 
-                if attacker ~= pawn or victim == pawn then
+                if not attacker or not victim or attacker ~= pawn or victim == pawn then
                     return
                 end
 
@@ -2286,7 +2280,37 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                     return
                 end
 
-                fnPlayEffect(effect_path, 5, ffi.cast("uintptr_t", victim[0]), 0, 0, 0, 0, 0, 0)
+                local handle = particle_manager:create_particle_effect(effect_path)
+                if not handle or handle == 0 then
+                    return
+                end
+
+                local origin = victim:get_abs_origin()
+                if origin then
+                    local pos = vector(origin.x, origin.y, origin.z + 30)
+                    particle_manager:set_position(handle, pos)
+                end
+
+                table.insert(active_effects, { handle = handle, time = os.clock() + 3.0 })
+            end
+
+            function kill_effect.update()
+                if #active_effects == 0 then return end
+                local now = os.clock()
+                for i = #active_effects, 1, -1 do
+                    local fx = active_effects[i]
+                    if now >= fx.time then
+                        particle_manager:destroy_particle(fx.handle)
+                        table.remove(active_effects, i)
+                    end
+                end
+            end
+
+            function kill_effect.clear()
+                for i = 1, #active_effects do
+                    particle_manager:destroy_particle(active_effects[i].handle)
+                end
+                active_effects = {}
             end
         end
 
@@ -2741,6 +2765,7 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
             crosshair.update()
             scope_overlay.paint()
             world_effects.paint()
+            kill_effect.update()
         end
 
         function visuals.override_view(view)
@@ -2763,6 +2788,7 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
             depth_of_field.level_init()
             particle_manager:update()
             particle_manager.is_active = true
+            kill_effect.clear()
         end
 
         function visuals.unload()
@@ -2770,6 +2796,7 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
             scope_overlay.unload()
             world_effects.unload()
             depth_of_field.unload()
+            kill_effect.clear()
         end
 
         function visuals.frame_stage_notify(stage)
@@ -3325,6 +3352,9 @@ __bundle_register("engine/particle_manager", function(require, _LOADED, __bundle
 
 ]]
 
+    -- pParticleManager (cs2-sdk build 14184, resolved global = client.dll +0x22213E8)
+    -- NOTE: это единственный паттерн, который в новых билдах резолвится в другой адрес
+    -- (в .data рядом с прежним), т.е. если эффекты перестанут работать - проверяй в первую очередь его
     local sig = assert(
         find_pattern("client.dll", "48 8B 0D ? ? ? ? 41 B8 ? ? ? ? F3 0F 11 74 24 ? 48 C7 44 24 ? ? ? ? ?"),
         "particle_manager outdated")
@@ -3340,17 +3370,20 @@ __bundle_register("engine/particle_manager", function(require, _LOADED, __bundle
 
     particle_mgr.is_active = true
 
+    -- DestroyParticle (cs2-sdk build 14184, client.dll +0x9D6070)
     local destroy_sig = assert(
         find_pattern("client.dll", "83 FA ? 0F 84 ? ? ? ? 41 54"),
         "destroy_particle not found")
     local fn_destroy = ffi.cast("void(__fastcall*)(void*, uint32_t, bool, bool)", destroy_sig)
 
+    -- Particles_SetControlPointPosition (cs2-sdk build 14184, client.dll +0xA11D00)
     local set_setting_sig = assert(
         find_pattern("client.dll",
             "48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC ? F3 0F 10 1D ? ? ? ? 41 8B F8 8B DA 4C 8D 05"),
         "set_particle_setting not found")
     local fn_set_setting = ffi.cast("void(__fastcall*)(void*, uint32_t, int, void*, int)", set_setting_sig)
 
+    -- CacheParticleEffect (cs2-sdk build 14184, client.dll +0x7CADF0)
     local create_sig = assert(find_pattern("client.dll", "4C 8B DC 53 48 81 EC ? ? ? ? F2 0F 10 05"),
         "create_particle_effect not found")
     local fn_create = ffi.cast("void(__fastcall*)(void*, uint32_t*, const char*, int, int, int, int, int)", create_sig)
@@ -4329,8 +4362,10 @@ __bundle_register("engine/entity", function(require, _LOADED, __bundle_register,
     local MAX_DUCK_SPEED = 8
     local set_model; do
         -- // STR: "models/inventory_items/dogtags.vmdl"
+        -- ChangeModel (alias SetModel) - cs2-sdk build 14184, client.dll +0x964420
+        -- proto: __int64 __fastcall ChangeModel(__int64 a1, __int64 a2 /*model path*/)
         local sig = assert(
-            find_pattern("client.dll", "40 53 48 83 ? ? 48 8B ? 4C 8B ? 48 8B ? ? ? ? ? 48 8D ? ? ? 48 8B"),
+            find_pattern("client.dll", "40 53 48 83 EC ? 48 8B D9 4C 8B C2 48 8B 0D ? ? ? ? 48 8D 54 24"),
             "fnSetModel outdated")
         set_model = ffi.cast("void* (__fastcall*)(void*, const char*)", sig)
     end
@@ -9082,33 +9117,35 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
                 "fnCreateMove outdated") -- // @xref: client.dll @ cl: %d ===========================
 
             local fnGetCommandIndex; do
-                local address = utils.get_abs_address(
-                    assert(
-                        opcode_scan("client.dll",
-                            "E8 ?? ?? ?? ?? 8B 4C 24 38 8D 51 FF 83 F9 FF 75 05 BA FF FF FF FF 48 8B 0D"),
-                        "fnGetCommandIndex outdated"),
-                    0x1, 0x0
-                )
+                -- GetUserCmdSequence (cs2-sdk build 14184, client.dll +0x9416F0)
+                -- читает номер текущей команды из ring + 0x5910.
+                -- паттерн матчится прямо в начале функции, никакого resolve call'а не нужно.
+                local address = assert(opcode_scan("client.dll",
+                    "48 83 EC 28 E8 ?? ?? ?? ?? 8B 80 10 59 00 00 48 83 C4 28 C3"),
+                    "fnGetCommandIndex outdated")
 
                 fnGetCommandIndex = ffi.cast("void*(__fastcall*)(void*, int*)", address)
             end
 
             local fnGetUserCmdBase; do
-                local address = utils.get_abs_address(
-                    assert(opcode_scan("client.dll", "E8 ?? ?? ?? ?? 48 8B CF 48 8B F0 44 8B B0 10 59 00 00"),
-                        "fnGetUserCmdBase outdated"),
-                    0x1, 0x0
-                )
+                -- GetCUserCmdArray (cs2-sdk build 14184, client.dll +0x944720)
+                -- proto: __int64 __fastcall GetCUserCmdArray(__int64 a1 /*CCSGOInput*/, int a2 /*cmd index*/)
+                local address = assert(opcode_scan("client.dll",
+                    "48 89 4C 24 08 41 56 41 57 48 83 EC 48 4C 63 FA 4C 8B F1"),
+                    "fnGetUserCmdBase outdated")
 
                 fnGetUserCmdBase = ffi.cast("void*(__fastcall*)(void*, int)", address)
             end
 
+            -- GetCUserCmdBySequenceNumber (cs2-sdk build 14184, client.dll +0x944500)
+            -- proto: __int64 __fastcall GetCUserCmdBySequenceNumber(__int64 a1 /*controller*/, int a2 /*sequence*/)
             local fnGetUserCmd = ffi.cast("CUserCmd*(__fastcall*)(void*, int)",
-                assert(opcode_scan("client.dll", "40 53 48 83 EC ?? 8B DA E8 ?? ?? ?? ?? 4C 8B C0"),
+                assert(opcode_scan("client.dll", "40 53 48 83 EC ? 8B DA E8 ? ? ? ? 4C 8B C0"),
                     "fnGetUserCmd: outdated"))
 
             local pClientInput = (function()
-                local pBase = assert(opcode_scan("client.dll", "48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B CF 48 8B F0"),
+                -- CInputPtrGlobal (alias pCSGOInput) - cs2-sdk build 14184, client.dll +0x2236440
+                local pBase = assert(opcode_scan("client.dll", "48 8B 0D ?? ?? ?? ?? 4C 8D 47 14"),
                     "pClientInput outdated")
                 return ffi.cast("void**", pBase + 7 + ffi.cast("int*", pBase + 3)[0])[0]
             end)()
@@ -9145,24 +9182,33 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
             end
         end
 
-        local fnTeamIntro = assert(find_pattern("client.dll", "48 83 EC 28 45 0F B6 08"), "fnTeamIntro outdated")
-        local fnRunPrediction = assert(find_pattern("engine2.dll", "40 55 41 56 48 83 EC ?? 80 B9"),
+        -- HandleTeamIntro (cs2-sdk build 14184, client.dll +0x76E5B0)
+        local fnTeamIntro = assert(find_pattern("client.dll", "48 83 EC ? ? ? ? ? 44 38 89"), "fnTeamIntro outdated")
+        -- RunPrediction (cs2-sdk build 14184, engine2.dll +0x655E0)
+        local fnRunPrediction = assert(find_pattern("engine2.dll", "40 55 41 56 48 83 EC ? 80 B9"),
             "fnRunPrediction outdated") -- // @xref: engine2.dll @ "CNetworkGameClient::ClientSidePredict", "%i pred reason %s -- start (latest command created %d)\n", "%i pred reason %s -- finish\n"
-        local fnScopeOverlay = assert(
-            utils.get_abs_address(opcode_scan("client.dll", "E8 ?? ?? ?? ?? 80 7C 24 ?? ?? 74 25"), 1, 0),
-            "fnScopeOverlay outdated") -- // ClientModeCSNormal > 27
+        -- DrawScopeOverlay (cs2-sdk build 14184, client.dll +0x8E1590)
+        -- proto: float* __fastcall DrawScopeOverlay(__int64 a1, __int64 a2)  -- ClientModeCSNormal > 27
+        local fnScopeOverlay = assert(find_pattern("client.dll", "48 8B C4 53 57 48 83 EC ? 48 8B FA"),
+            "fnScopeOverlay outdated")
 
+        -- CLoggingSystem::LogDirect - tier0.dll (в дампе cs2-sdk его нет, но паттерн жив:
+        -- локально ровно 1 совпадение, tier0+0x127CD0). Подтверждено независимо:
+        -- SwiftlyS2 (gamedata/cs2/core/signatures.jsonc) и modsharp-public (log.games.jsonc).
+        -- proto: Log(LoggingChannelID_t, LoggingSeverity_t, Color, const char* fmt, ...)
         local fnLogSystem = assert(find_pattern("tier0.dll", "4C 89 4C 24 ? 44 89 44 24 ? 89 54 24 ? 55"),
             "fnLogSsytem outdated") -- //xref: %s():\n%s, Exiting due to logging LR_ABORT request.\n
 
         -- котакбасина туда встань
         -- local fnOverrideView = assert(opcode_scan("client.dll", "48 89 5C 24 10 55 48 8D 6C 24 A9 48 81 EC B0 00 00 00"), "fnOverrideView outdated") -- // ClientModeShared > 15
         local fnFrameStageNotify = vmt.get_v_method(Source2Client002, 36) -- // @xref: STR: "Client Restore Server State", "FrameNetUpdate(%.3f %d)", "FramePostDataUpdate(%.3f %d)", "C:\buildworker\csgo_rel_win64\build\src\game\client\cdll_client_int.cpp"
-        local fnLevelInit = assert(find_pattern("client.dll", "40 55 56 41 56 48 8D 6C 24 ? 48 81 EC ? ? ? ? 48 8B 0D"),
+        -- LevelInit (cs2-sdk build 14184, client.dll +0x9599C0)
+        local fnLevelInit = assert(find_pattern("client.dll", "40 55 56 41 56 48 8D 6C 24 ? 48 81 EC ? ? ? ? 48"),
             "fnLevelInit outdated")                                   -- // @xref: game_newmap, mapname
+        -- ClientModeShared_LevelShutdown (alias LevelShutdown) - cs2-sdk build 14184, client.dll +0xB98440
         local fnLevelShutdown = assert(
             find_pattern("client.dll",
-                "48 83 EC ? 48 8B 0D ? ? ? ? 48 8D 15 ? ? ? ? 45 33 C9 45 33 C0 ? ? ? FF 50 ? 48 85 C0 74 ? 48 8B 0D ? ? ? ? 48 8B D0 ? ? ? 41 FF 50 ? 48 83 C4"),
+                "48 83 EC 28 48 8B 0D ? ? ? ? 48 8D 15 ? ? ? ? 45 33 C9 45 33 C0 48 8B 01 FF 50 30 48 85 C0 74 ? 48 8B 0D ? ? ? ? 48 8B D0 4C 8B 01 41 FF 50 40 48 83 C4 28"),
             "fnLevelShutdown outdated") -- // @xref: mapshutdown
 
         local events_data = {
