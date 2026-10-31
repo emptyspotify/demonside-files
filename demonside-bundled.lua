@@ -465,6 +465,10 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                     }
                 end)
 
+                in_game.kill_effect:set_callback(function(self)
+                    self:set(false)
+                end)
+
                 in_game.wallbang_helper = in_game:switch("Wallbang Helper", false, function(gear)
                     local gears = {}
 
@@ -1306,7 +1310,7 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                     LEFTLEG = 6,
                     RIGHTLEG = 7,
                     NECK = 8,
-                    UNUSED = 9, -- WTF
+                    UNUSED = 9,   -- WTF
                     GEAR = 10,
                     SPECIAL = 11, -- WTF x2
                     COUNT = 12
@@ -2250,6 +2254,7 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
         end
 
         local kill_effect = {}; do
+            --[[
             local master = in_game.kill_effect
 
             local effect_map = {
@@ -2261,56 +2266,18 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
             }
 
             local active_effects = {}
+            --]]
 
             function kill_effect.player_death(e)
-                if not master:get() then
-                    return
-                end
-
-                local pawn = entitylist.get_local_player_pawn()
-                local victim = e:get_pawn("userid")
-                local attacker = e:get_pawn("attacker")
-
-                if not attacker or not victim or attacker ~= pawn or victim == pawn then
-                    return
-                end
-
-                local effect_path = effect_map[master.effect:get()]
-                if not effect_path then
-                    return
-                end
-
-                local handle = particle_manager:create_particle_effect(effect_path)
-                if not handle or handle == 0 then
-                    return
-                end
-
-                local origin = victim:get_abs_origin()
-                if origin then
-                    local pos = vector(origin.x, origin.y, origin.z + 30)
-                    particle_manager:set_position(handle, pos)
-                end
-
-                table.insert(active_effects, { handle = handle, time = os.clock() + 3.0 })
+                -- disabled
             end
 
             function kill_effect.update()
-                if #active_effects == 0 then return end
-                local now = os.clock()
-                for i = #active_effects, 1, -1 do
-                    local fx = active_effects[i]
-                    if now >= fx.time then
-                        particle_manager:destroy_particle(fx.handle)
-                        table.remove(active_effects, i)
-                    end
-                end
+                -- disabled
             end
 
             function kill_effect.clear()
-                for i = 1, #active_effects do
-                    particle_manager:destroy_particle(active_effects[i].handle)
-                end
-                active_effects = {}
+                -- disabled
             end
         end
 
@@ -6129,7 +6096,7 @@ __bundle_register("render/gui", function(require, _LOADED, __bundle_register, __
                     background_color, circle_color, item.pct)
 
                 local text_color = color_t(.75, .75, .75, 1):lerp(color_t(.92, .92, .92, 1), item.pct):alpha_modulate(
-                alpha)
+                    alpha)
 
                 render.text(item.name, FONTS.ITEMS, vec2_t(pos.x, pos.y - .5), text_color)
 
@@ -6324,7 +6291,7 @@ __bundle_register("render/gui", function(require, _LOADED, __bundle_register, __
                             end
 
                             item.value = item.value:sub(1, item.cursor_pos - 1) ..
-                            symbol .. item.value:sub(item.cursor_pos)
+                                symbol .. item.value:sub(item.cursor_pos)
                             item.cursor_pos = item.cursor_pos + 1
                             text_changed = true
                         end
@@ -7182,8 +7149,12 @@ __bundle_register("render/gui", function(require, _LOADED, __bundle_register, __
 
                                 if instanceof == slider then
                                     if item.offset_pct > 0.1 then
-                                        local mouse_data = { is_lmb = is_lmb, is_left_button = is_left_button, pos =
-                                        mouse }
+                                        local mouse_data = {
+                                            is_lmb = is_lmb,
+                                            is_left_button = is_left_button,
+                                            pos =
+                                                mouse
+                                        }
                                         local add, gear_data = gui_render:slider(item, vec2_t(x, y), column_width,
                                             item_alpha,
                                             mouse_data, false, true)
@@ -7199,8 +7170,12 @@ __bundle_register("render/gui", function(require, _LOADED, __bundle_register, __
 
                                 if instanceof == button then
                                     if item.offset_pct > 0.1 then
-                                        local mouse_data = { is_lmb = is_lmb, is_left_button = is_left_button, pos =
-                                        mouse }
+                                        local mouse_data = {
+                                            is_lmb = is_lmb,
+                                            is_left_button = is_left_button,
+                                            pos =
+                                                mouse
+                                        }
                                         local add = gui_render:button(item, vec2_t(x, y), column_width, item_alpha,
                                             mouse_data, false)
 
@@ -7515,7 +7490,7 @@ __bundle_register("render/gui", function(require, _LOADED, __bundle_register, __
 
                 local avatar_size = 15
                 local avatar_pos = position +
-                vec2_t(avatar_size + PADDING * 1.5, size.current.y - avatar_size - PADDING * 2)
+                    vec2_t(avatar_size + PADDING * 1.5, size.current.y - avatar_size - PADDING * 2)
 
                 render.circle_filled(avatar_pos, 15, 30, color_t(0.05, 0.05, 0.05, alpha))
                 local text_size = render.calc_text_size("?", FONTS.USERNAME)
@@ -8540,7 +8515,7 @@ __bundle_register("system/http", function(require, _LOADED, __bundle_register, _
                 return status_code, nil;
             else
                 local error_msg = "WinHttpQueryHeaders failed to retrieve status code. Error: " ..
-                tostring(C.GetLastError());
+                    tostring(C.GetLastError());
                 return -1, error_msg;
             end;
         end;
@@ -9121,7 +9096,7 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
                 -- читает номер текущей команды из ring + 0x5910.
                 -- паттерн матчится прямо в начале функции, никакого resolve call'а не нужно.
                 local address = assert(opcode_scan("client.dll",
-                    "48 83 EC 28 E8 ?? ?? ?? ?? 8B 80 10 59 00 00 48 83 C4 28 C3"),
+                        "48 83 EC 28 E8 ?? ?? ?? ?? 8B 80 10 59 00 00 48 83 C4 28 C3"),
                     "fnGetCommandIndex outdated")
 
                 fnGetCommandIndex = ffi.cast("void*(__fastcall*)(void*, int*)", address)
@@ -9131,7 +9106,7 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
                 -- GetCUserCmdArray (cs2-sdk build 14184, client.dll +0x944720)
                 -- proto: __int64 __fastcall GetCUserCmdArray(__int64 a1 /*CCSGOInput*/, int a2 /*cmd index*/)
                 local address = assert(opcode_scan("client.dll",
-                    "48 89 4C 24 08 41 56 41 57 48 83 EC 48 4C 63 FA 4C 8B F1"),
+                        "48 89 4C 24 08 41 56 41 57 48 83 EC 48 4C 63 FA 4C 8B F1"),
                     "fnGetUserCmdBase outdated")
 
                 fnGetUserCmdBase = ffi.cast("void*(__fastcall*)(void*, int)", address)
@@ -9204,7 +9179,7 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
         local fnFrameStageNotify = vmt.get_v_method(Source2Client002, 36) -- // @xref: STR: "Client Restore Server State", "FrameNetUpdate(%.3f %d)", "FramePostDataUpdate(%.3f %d)", "C:\buildworker\csgo_rel_win64\build\src\game\client\cdll_client_int.cpp"
         -- LevelInit (cs2-sdk build 14184, client.dll +0x9599C0)
         local fnLevelInit = assert(find_pattern("client.dll", "40 55 56 41 56 48 8D 6C 24 ? 48 81 EC ? ? ? ? 48"),
-            "fnLevelInit outdated")                                   -- // @xref: game_newmap, mapname
+            "fnLevelInit outdated") -- // @xref: game_newmap, mapname
         -- ClientModeShared_LevelShutdown (alias LevelShutdown) - cs2-sdk build 14184, client.dll +0xB98440
         local fnLevelShutdown = assert(
             find_pattern("client.dll",
