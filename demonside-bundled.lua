@@ -73,6 +73,9 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
     void* SetFocus(void*);
     bool ShowWindow(void*, int);
     bool FlashWindow(void* hWnd, bool bInvert);
+
+    void* VirtualAlloc(void* lpAddress, size_t dwSize, uint32_t flAllocationType, uint32_t flProtect);
+    bool VirtualFree(void* lpAddress, size_t dwSize, uint32_t dwFreeType);
 ]]
 
     local base_path = get_game_directory() .. "\\lua\\demonside\\"
@@ -177,6 +180,7 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
     local clipboard = require("system/clipboard")
     local cmd_button_t = require("engine/cmd_button_t")
     local particle_manager = require("engine/particle_manager")
+    local shader = require("engine/shader")
     -- local veh = require "library/system/veh"
     --
     local folders = {}; do
@@ -465,10 +469,6 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                     }
                 end)
 
-                in_game.kill_effect:set_callback(function(self)
-                    self:set(false)
-                end)
-
                 in_game.wallbang_helper = in_game:switch("Wallbang Helper", false, function(gear)
                     local gears = {}
 
@@ -592,6 +592,13 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                     return {
                         weather = gear:selectable("Weather", { "Ash", "Snow", "Rain", "Stars" }),
                         density = gear:slider("Density", 50, 1000, 200),
+                    }
+                end)
+
+                in_game.wetness = in_game:switch("Wetness", false, function(gear)
+                    return {
+                        density = gear:slider("Density", 0, 200, 100, "%d%%"),
+                        speed = gear:slider("Speed", 0, 300, 100, "%d%%"),
                     }
                 end)
 
@@ -1310,7 +1317,7 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                     LEFTLEG = 6,
                     RIGHTLEG = 7,
                     NECK = 8,
-                    UNUSED = 9,   -- WTF
+                    UNUSED = 9, -- WTF
                     GEAR = 10,
                     SPECIAL = 11, -- WTF x2
                     COUNT = 12
@@ -1561,7 +1568,6 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                     end
 
                     bar = clamp(bar, 0.01, 1)
-
                     alpha = tweening:interp(alpha, master:get() and (ui.is_menu_opened() and 1 or bar < 1), .05)
 
                     if alpha <= 0 then
@@ -2156,6 +2162,11 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
 
             local master = in_game.grenades_esp
 
+            local m_firePositions = engine.get_netvar_offset("client.dll", "C_Inferno", "m_firePositions")
+            local m_bFireIsBurning = engine.get_netvar_offset("client.dll", "C_Inferno", "m_bFireIsBurning")
+            local m_fireCount = engine.get_netvar_offset("client.dll", "C_Inferno", "m_fireCount")
+
+
             local function get_convex_hull(points)
                 local n = #points
                 if n <= 2 then return points end
@@ -2190,19 +2201,27 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                     local world_points = {}
 
                     if class_name == "C_Inferno" then
-                        local count = ent.m_fireCount
-                        if not count or count < 1 then return end
+                        local ent_ptr = ffi.cast("uintptr_t*", ent)[0]
+                        if not ent_ptr or ent_ptr == 0 then return end
+
+                        local count = ffi.cast("int32_t*", ent_ptr + m_fireCount)[0]
+                        if not count or count <= 0 or count > 64 then return end
+
+                        local is_burning = ffi.cast("bool*", ent_ptr + m_bFireIsBurning)
+                        local positions = ffi.cast("float*", ent_ptr + m_firePositions)
 
                         for i = 0, count - 1 do
-                            if ent.m_bFireIsBurning[i] then
-                                local pos = ent.m_firePositions[i]
-                                if pos and pos.x ~= 0 then
+                            if is_burning[i] then
+                                local px = positions[i * 3 + 0]
+                                local py = positions[i * 3 + 1]
+                                local pz = positions[i * 3 + 2]
+                                if (px ~= 0 or py ~= 0) and type(py) == "number" then
                                     for j = 1, 4 do
                                         local ang = (j * 90) * (math.pi / 180)
                                         table.insert(world_points, {
-                                            x = pos.x + math.cos(ang) * MOLOTOV_RADIUS,
-                                            y = pos.y + math.sin(ang) * MOLOTOV_RADIUS,
-                                            z = pos.z
+                                            x = px + math.cos(ang) * MOLOTOV_RADIUS,
+                                            y = py + math.sin(ang) * MOLOTOV_RADIUS,
+                                            z = pz
                                         })
                                     end
                                 end
@@ -2211,9 +2230,18 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                     elseif class_name == "C_SmokeGrenadeProjectile" then
                         if not ent.m_bDidSmokeEffect then return end
 
-                        local pos = ent.m_vSmokeDetonationPos
-                        if not pos or pos.x == 0 then pos = ent.m_vecOrigin end
-                        if not pos or pos.x == 0 then return end
+                        local pos = ent:get_abs_origin()
+                        if not pos or (pos.x == 0 and pos.y == 0) then
+                            local ent_ptr = ffi.cast("uintptr_t*", ent)[0]
+                            if ent_ptr ~= 0 then
+                                local v = ffi.cast("float*", ent_ptr + 0x1378)
+                                pos = vec3_t(v[0], v[1], v[2])
+                            end
+                        end
+
+                        if not pos or (pos.x == 0 and pos.y == 0) then
+                            return
+                        end
 
                         for i = 1, CIRCLE_SEGMENTS do
                             local ang = (i / CIRCLE_SEGMENTS) * math.pi * 2
@@ -2254,7 +2282,6 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
         end
 
         local kill_effect = {}; do
-            --[[
             local master = in_game.kill_effect
 
             local effect_map = {
@@ -2265,19 +2292,36 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                 ["Taser"] = "particles/blood_impact/impact_taser_bodyfx.vpcf",
             }
 
-            local active_effects = {}
-            --]]
+            -- // @xref: STR: "particles/blood_impact/impact_taser_bodyfx.vpcf" -> call in sub_180D20300
+            -- // @xref: CEffectData::`vftable` (LEA rax in sub_180A3E9A0)
+            local fnPlayEffect = assert(
+                find_pattern("client.dll",
+                    "48 89 5C 24 ? 48 89 7C 24 ? 55 41 56 41 57 48 8D 6C 24 ? 48 81 EC ? ? ? ? 48 8B"),
+                "fnPlayEffect outdated"); do
+                fnPlayEffect = ffi.cast(
+                    "void (__fastcall *)(const char*, int, uintptr_t, char, int, char, unsigned int, int, char)",
+                    fnPlayEffect)
+            end
 
             function kill_effect.player_death(e)
-                -- disabled
-            end
+                if not master:get() then
+                    return
+                end
 
-            function kill_effect.update()
-                -- disabled
-            end
+                local pawn = entitylist.get_local_player_pawn()
+                local victim = e:get_pawn("userid")
+                local attacker = e:get_pawn("attacker")
 
-            function kill_effect.clear()
-                -- disabled
+                if attacker ~= pawn or victim == pawn then
+                    return
+                end
+
+                local effect_path = effect_map[master.effect:get()]
+                if not effect_path then
+                    return
+                end
+
+                fnPlayEffect(effect_path, 5, ffi.cast("uintptr_t", victim[0]), 0, 0, 0, 0, 0, 0)
             end
         end
 
@@ -2406,9 +2450,9 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
 
                                 local in_clr = color(1, 1, 1, 1)
                                 if total_error < 0.5 then
-                                    in_clr = color(0, 1, 0, 1) -- Green
+                                    in_clr = color(0, 1, 0, 1)
                                 elseif total_error < 5.0 then
-                                    in_clr = color(1, 1, 0, 1) -- Yellow
+                                    in_clr = color(1, 1, 0, 1)
                                 end
 
                                 local text = loc.name .. " (Aim)"
@@ -2527,6 +2571,41 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                     particle_manager:destroy_particle(last_effect_index2)
                     last_effect_index2 = nil
                 end
+            end
+        end
+
+        local wetness = {}; do
+            local master = in_game.wetness
+
+            local timer = 0
+            local last_time = os.clock()
+
+            function wetness.paint()
+                if not master:get() then
+                    shader.remove("rain_exposure_to_sky")
+                    shader.remove("rain_wetness")
+                    shader.remove("rain_timer")
+                    last_time = os.clock()
+                    return
+                end
+
+                local now = os.clock()
+                local dt = now - last_time
+                last_time = now
+
+                if dt > 0 and dt < 1.0 then
+                    timer = timer + dt * (master.speed:get() / 100.0)
+                end
+
+                shader.set("rain_exposure_to_sky", 1.0)
+                shader.set("rain_wetness", master.density:get() / 100.0)
+                shader.set("rain_timer", timer)
+            end
+
+            function wetness.unload()
+                shader.remove("rain_exposure_to_sky")
+                shader.remove("rain_wetness")
+                shader.remove("rain_timer")
             end
         end
 
@@ -2732,7 +2811,7 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
             crosshair.update()
             scope_overlay.paint()
             world_effects.paint()
-            kill_effect.update()
+            wetness.paint()
         end
 
         function visuals.override_view(view)
@@ -2755,7 +2834,6 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
             depth_of_field.level_init()
             particle_manager:update()
             particle_manager.is_active = true
-            kill_effect.clear()
         end
 
         function visuals.unload()
@@ -2763,7 +2841,8 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
             scope_overlay.unload()
             world_effects.unload()
             depth_of_field.unload()
-            kill_effect.clear()
+            wetness.unload()
+            shader.unload()
         end
 
         function visuals.frame_stage_notify(stage)
@@ -3015,27 +3094,36 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
 
         local edge_jump = {}; do
             local jump = cmd_button_t "jump"
-
             local FL_ONGROUND = bit.lshift(1, 0)
+            local was_on_ground = false
 
             function edge_jump.createmove()
-                jump:release()
-
                 local me = entitylist.get_local_player_pawn()
-
-                if not me and not me:is_alive() then
+                if not me or not me:is_alive() then
+                    was_on_ground = false
+                    jump:release()
                     return
                 end
 
                 local flags = me.m_fFlags
+                local on_ground = bit.band(flags, FL_ONGROUND) ~= 0
 
-                if extra.edge_jump:is_active() and not (bit.band(flags, FL_ONGROUND) ~= 0) then
-                    jump:press()
+                -- Edge Jump: ����������� ������ ��� ����� � ������ (��� �� ����� -> �������� � ������� ��� ������ �����)
+                if extra.edge_jump:is_active() and was_on_ground and not on_ground then
+                    local vel = me:get_velocity()
+                    if vel and vel.z <= 0 then
+                        jump:press()
+                    end
+                else
+                    jump:release()
                 end
+
+                was_on_ground = on_ground
             end
 
             function edge_jump.unload()
                 jump:release()
+                was_on_ground = false
             end
         end
 
@@ -3307,6 +3395,409 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
 
     -- print(f("Glad to see you, %s!", discord.username))
 end)
+__bundle_register("engine/shader", function(require, _LOADED, __bundle_register, __bundle_modules)
+    local memory = require("core/memory")
+    local detour = require("core/detour")
+
+    local shader = {}; do
+        shader.hash = {
+            rain_exposure_to_sky = 0x374C1B3C,
+            rain_exposure_to_sky_wetness = 0x0F592812,
+            rain_wetness = 0x0F592812,
+            rain_exposure_local_timer = 0x2DBEE393,
+            rain_timer = 0x2DBEE393,
+            wind_direction = 0xCDE54581,
+            wind_strength_frequency = 0xEB0D997E,
+            gradient_fog = 0x4B01FF63,
+            gradient_fog2 = 0x0AA49C2A,
+            gradient_fog3 = 0xFBF6448D,
+            enable_gradient_fog = 0x6E0FAD7E,
+            dof = 0x2ACAB07C,
+            gamma = 0x24470A87,
+            bloom_scale = 0x565EAF76,
+            bloom_threshold = 0xBA98A9B0,
+            bloom_width = 0x2AE72B37,
+            bloom_strength = 0xB692902E,
+            bloom_skybox = 0x1313A424
+        }
+
+        local target_addr = nil
+        local stub_mem = nil
+        local p_count = nil
+        local hook_instance = nil
+        local resolve_attempted = false
+
+        local original_prologue = {
+            0x48, 0x89, 0x6C, 0x24, 0x10,
+            0x48, 0x89, 0x74, 0x24, 0x18,
+            0x57,
+            0x48, 0x83, 0xEC, 0x20
+        }
+
+        local stub_code = {
+            0x8B, 0x05, 0xBA, 0xFF, 0xFF, 0xFF,
+            0x85, 0xC0,
+            0x74, 0x21,
+            0x4C, 0x8D, 0x0D, 0xAF, 0x00, 0x00, 0x00,
+            0x41, 0x39, 0x11,
+            0x75, 0x0D,
+            0x41, 0x83, 0x79, 0x04, 0x00,
+            0x74, 0x06,
+            0x4D, 0x8D, 0x41, 0x10,
+            0xEB, 0x08,
+            0x49, 0x83, 0xC1, 0x20,
+            0xFF, 0xC8,
+            0x75, 0xE6,
+            0x48, 0x89, 0x6C, 0x24, 0x10,
+            0x48, 0x89, 0x74, 0x24, 0x18,
+            0x57,
+            0x48, 0x83, 0xEC, 0x20,
+            0xFF, 0x25, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        }
+
+        local entries = {}
+        local free_slots = {}
+        for i = 0, 63 do
+            table.insert(free_slots, i)
+        end
+
+        local function resolve_target()
+            local p_old = find_pattern("client.dll", "45 84 E4 90 90 90 90 90 90 48 85 C0")
+            if p_old and ffi.cast("uintptr_t", p_old) ~= 0 then
+                memory.write(ffi.cast("uint8_t*", p_old) + 3, { 0x0F, 0x84, 0xA4, 0x00, 0x00, 0x00 })
+            end
+
+            local sig = memory.pattern("client.dll", "BA 7E 99 0D EB 48 8B CB 66 0F 7F 45 F0 E8 ? ? ? ?")
+            local target = memory.rip(sig + 13, 1, 5)
+
+            if target[0] == 0xFF and target[1] == 0x25 then
+                memory.write(target, original_prologue, 15)
+            end
+
+            assert(
+                target[0] == 0x48 and target[1] == 0x89 and target[2] == 0x6C and target[3] == 0x24 and target[4] == 0x10 and
+                target[10] == 0x57, "SetShaderParam invalid prologue")
+            return target
+        end
+
+        local function init()
+            if hook_instance and hook_instance.active then return true end
+            if resolve_attempted then return false end
+            resolve_attempted = true
+
+            target_addr = resolve_target()
+            if not target_addr then return false end
+
+            stub_mem = memory.alloc(4096)
+            if not stub_mem then return false end
+
+            p_count = ffi.cast("uint32_t*", stub_mem)
+            p_count[0] = 0
+
+            memory.write(stub_mem + 0x40, stub_code)
+            ffi.cast("uintptr_t*", stub_mem + 0x80)[0] = ffi.cast("uintptr_t", target_addr + 15)
+
+            hook_instance = detour.new(target_addr, stub_mem + 0x40, 15)
+            hook_instance:apply()
+
+            return true
+        end
+
+        local function parse_hash(h)
+            if type(h) == "number" then
+                return h
+            elseif type(h) == "string" then
+                return shader.hash[h] or shader.hash[h:lower()] or tonumber(h)
+            end
+            return nil
+        end
+
+        function shader.set(hash, x, y, z, w)
+            local h = parse_hash(hash)
+            if not h then return end
+
+            if x == nil then
+                shader.remove(h)
+                return
+            end
+
+            if not hook_instance or not hook_instance.active then
+                if not init() then return end
+            end
+
+            local slot = entries[h]
+            if not slot then
+                if #free_slots == 0 then return end
+                local idx = table.remove(free_slots, 1)
+                local ptr = stub_mem + 0x100 + idx * 0x20
+                slot = {
+                    index = idx,
+                    hash = ffi.cast("uint32_t*", ptr),
+                    active = ffi.cast("uint32_t*", ptr + 4),
+                    val = ffi.cast("float*", ptr + 16)
+                }
+                slot.hash[0] = h
+                slot.active[0] = 1
+                entries[h] = slot
+
+                if idx + 1 > p_count[0] then
+                    p_count[0] = idx + 1
+                end
+            else
+                slot.active[0] = 1
+            end
+
+            if type(x) == "number" and y == nil then
+                slot.val[0] = x
+                slot.val[1] = x
+                slot.val[2] = x
+                slot.val[3] = x
+            elseif type(x) == "table" then
+                if x.r and x.g and x.b then
+                    slot.val[0] = x.r / 255.0
+                    slot.val[1] = x.g / 255.0
+                    slot.val[2] = x.b / 255.0
+                    slot.val[3] = (x.a or 255) / 255.0
+                else
+                    slot.val[0] = x[1] or x.x or 0
+                    slot.val[1] = x[2] or x.y or 0
+                    slot.val[2] = x[3] or x.z or 0
+                    slot.val[3] = x[4] or x.w or 0
+                end
+            else
+                slot.val[0] = x or 0
+                slot.val[1] = y or 0
+                slot.val[2] = z or 0
+                slot.val[3] = w or 0
+            end
+        end
+
+        function shader.get(hash)
+            local h = parse_hash(hash)
+            if not h then return nil end
+            local slot = entries[h]
+            if not slot or slot.active[0] == 0 then return nil end
+            return { slot.val[0], slot.val[1], slot.val[2], slot.val[3] }
+        end
+
+        function shader.remove(hash)
+            local h = parse_hash(hash)
+            if not h then return end
+            local slot = entries[h]
+            if not slot then return end
+
+            slot.active[0] = 0
+            slot.hash[0] = 0
+            entries[h] = nil
+            table.insert(free_slots, 1, slot.index)
+
+            local max_idx = -1
+            for _, s in pairs(entries) do
+                if s.index > max_idx then
+                    max_idx = s.index
+                end
+            end
+            if p_count then
+                p_count[0] = max_idx + 1
+            end
+        end
+
+        function shader.clear()
+            for h, _ in pairs(entries) do
+                shader.remove(h)
+            end
+            if p_count then
+                p_count[0] = 0
+            end
+        end
+
+        function shader.unload()
+            if hook_instance then
+                hook_instance:remove()
+                hook_instance = nil
+            end
+            if stub_mem then
+                memory.free(stub_mem)
+                stub_mem = nil
+            end
+            entries = {}
+            free_slots = {}
+            for i = 0, 63 do
+                table.insert(free_slots, i)
+            end
+            target_addr = nil
+            p_count = nil
+            resolve_attempted = false
+        end
+    end
+
+    return shader
+end)
+__bundle_register("core/detour", function(require, _LOADED, __bundle_register, __bundle_modules)
+    local memory = require("core/memory")
+
+    local detour = {}; do
+        local hooks = {}
+
+        local detour_mt = {}
+        detour_mt.__index = detour_mt
+
+        function detour_mt:apply()
+            if self.active then return true end
+            if not memory.write(self.target, self.patch, self.size) then
+                return false
+            end
+            self.active = true
+            return true
+        end
+
+        function detour_mt:restore()
+            if not self.active then return true end
+            if not memory.write(self.target, self.backup, self.size) then
+                return false
+            end
+            self.active = false
+            return true
+        end
+
+        function detour_mt:remove()
+            self:restore()
+            for i = #hooks, 1, -1 do
+                if hooks[i] == self then
+                    table.remove(hooks, i)
+                    break
+                end
+            end
+        end
+
+        function detour.new(target, destination, size)
+            size = size or 14
+            assert(size >= 14, "detour size must be at least 14 bytes")
+
+            local t_addr = ffi.cast("uint8_t*", target)
+            local d_addr = ffi.cast("uintptr_t", destination)
+
+            local backup = memory.read(t_addr, size)
+
+            local patch = ffi.new("uint8_t[?]", size)
+            for i = 0, size - 1 do
+                patch[i] = 0x90
+            end
+
+            patch[0] = 0xFF
+            patch[1] = 0x25
+            patch[2] = 0x00
+            patch[3] = 0x00
+            patch[4] = 0x00
+            patch[5] = 0x00
+            ffi.cast("uintptr_t*", patch + 6)[0] = d_addr
+
+            local instance = setmetatable({
+                target = t_addr,
+                destination = d_addr,
+                size = size,
+                backup = backup,
+                patch = patch,
+                active = false
+            }, detour_mt)
+
+            table.insert(hooks, instance)
+            return instance
+        end
+
+        function detour.restore_all()
+            for i = #hooks, 1, -1 do
+                hooks[i]:restore()
+            end
+        end
+
+        if register_callback then
+            register_callback("unload", function()
+                detour.restore_all()
+            end)
+        end
+    end
+
+    return detour
+end)
+__bundle_register("core/memory", function(require, _LOADED, __bundle_register, __bundle_modules)
+    local memory = {}; do
+        ffi.cdef [[
+        int VirtualProtect(void* lpAddress, size_t dwSize, uint32_t flNewProtect, uint32_t* lpflOldProtect);
+        void* VirtualAlloc(void* lpAddress, size_t dwSize, uint32_t flAllocationType, uint32_t flProtect);
+        bool VirtualFree(void* lpAddress, size_t dwSize, uint32_t dwFreeType);
+    ]]
+
+        function memory.protect(address, size, new_protect)
+            local addr = ffi.cast("void*", address)
+            local prev = ffi.new("uint32_t[1]")
+            if ffi.C.VirtualProtect(addr, size, new_protect, prev) ~= 0 then
+                return prev[0] > 0 and prev[0] or 0x20
+            end
+            return nil
+        end
+
+        function memory.write(address, data, size)
+            local addr = ffi.cast("uint8_t*", address)
+            local len = size
+            local src = data
+
+            if type(data) == "table" then
+                len = len or #data
+                src = ffi.new("uint8_t[?]", len, data)
+            elseif type(data) == "string" then
+                len = len or #data
+            elseif type(data) == "cdata" and not len then
+                len = ffi.sizeof(data)
+            end
+
+            local prev = memory.protect(addr, len, 0x40)
+            if not prev then return false end
+
+            ffi.copy(addr, src, len)
+            memory.protect(addr, len, prev)
+            return true
+        end
+
+        function memory.read(address, size)
+            local addr = ffi.cast("uint8_t*", address)
+            local buf = ffi.new("uint8_t[?]", size)
+            ffi.copy(buf, addr, size)
+            return buf
+        end
+
+        function memory.alloc(size, protect, alloc_type)
+            local ptr = ffi.C.VirtualAlloc(nil, size, alloc_type or 0x3000, protect or 0x40)
+            if ptr == nil or ffi.cast("uintptr_t", ptr) == 0 then
+                return nil
+            end
+            return ffi.cast("uint8_t*", ptr)
+        end
+
+        function memory.free(address, size, free_type)
+            if not address or ffi.cast("uintptr_t", address) == 0 then
+                return false
+            end
+            return ffi.C.VirtualFree(ffi.cast("void*", address), size or 0, free_type or 0x8000)
+        end
+
+        function memory.pattern(module_name, signature)
+            local addr = find_pattern(module_name, signature)
+            assert(addr and ffi.cast("uintptr_t", addr) ~= 0,
+                string.format("pattern not found: %s [%s]", module_name, signature))
+            return ffi.cast("uint8_t*", addr)
+        end
+
+        function memory.rip(address, offset, inst_size)
+            local addr = ffi.cast("uint8_t*", address)
+            local rel = ffi.cast("int32_t*", addr + (offset or 1))[0]
+            return addr + (inst_size or 5) + rel
+        end
+    end
+
+    return memory
+end)
 __bundle_register("engine/particle_manager", function(require, _LOADED, __bundle_register, __bundle_modules)
     local particle_mgr = {}
     local vmt = require("engine/vmt")
@@ -3319,9 +3810,6 @@ __bundle_register("engine/particle_manager", function(require, _LOADED, __bundle
 
 ]]
 
-    -- pParticleManager (cs2-sdk build 14184, resolved global = client.dll +0x22213E8)
-    -- NOTE: это единственный паттерн, который в новых билдах резолвится в другой адрес
-    -- (в .data рядом с прежним), т.е. если эффекты перестанут работать - проверяй в первую очередь его
     local sig = assert(
         find_pattern("client.dll", "48 8B 0D ? ? ? ? 41 B8 ? ? ? ? F3 0F 11 74 24 ? 48 C7 44 24 ? ? ? ? ?"),
         "particle_manager outdated")
@@ -3337,20 +3825,17 @@ __bundle_register("engine/particle_manager", function(require, _LOADED, __bundle
 
     particle_mgr.is_active = true
 
-    -- DestroyParticle (cs2-sdk build 14184, client.dll +0x9D6070)
     local destroy_sig = assert(
         find_pattern("client.dll", "83 FA ? 0F 84 ? ? ? ? 41 54"),
         "destroy_particle not found")
     local fn_destroy = ffi.cast("void(__fastcall*)(void*, uint32_t, bool, bool)", destroy_sig)
 
-    -- Particles_SetControlPointPosition (cs2-sdk build 14184, client.dll +0xA11D00)
     local set_setting_sig = assert(
         find_pattern("client.dll",
             "48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC ? F3 0F 10 1D ? ? ? ? 41 8B F8 8B DA 4C 8D 05"),
         "set_particle_setting not found")
     local fn_set_setting = ffi.cast("void(__fastcall*)(void*, uint32_t, int, void*, int)", set_setting_sig)
 
-    -- CacheParticleEffect (cs2-sdk build 14184, client.dll +0x7CADF0)
     local create_sig = assert(find_pattern("client.dll", "4C 8B DC 53 48 81 EC ? ? ? ? F2 0F 10 05"),
         "create_particle_effect not found")
     local fn_create = ffi.cast("void(__fastcall*)(void*, uint32_t*, const char*, int, int, int, int, int)", create_sig)
@@ -4329,10 +4814,8 @@ __bundle_register("engine/entity", function(require, _LOADED, __bundle_register,
     local MAX_DUCK_SPEED = 8
     local set_model; do
         -- // STR: "models/inventory_items/dogtags.vmdl"
-        -- ChangeModel (alias SetModel) - cs2-sdk build 14184, client.dll +0x964420
-        -- proto: __int64 __fastcall ChangeModel(__int64 a1, __int64 a2 /*model path*/)
         local sig = assert(
-            find_pattern("client.dll", "40 53 48 83 EC ? 48 8B D9 4C 8B C2 48 8B 0D ? ? ? ? 48 8D 54 24"),
+            find_pattern("client.dll", "40 53 48 83 ? ? 48 8B ? 4C 8B ? 48 8B ? ? ? ? ? 48 8D ? ? ? 48 8B"),
             "fnSetModel outdated")
         set_model = ffi.cast("void* (__fastcall*)(void*, const char*)", sig)
     end
@@ -6096,7 +6579,7 @@ __bundle_register("render/gui", function(require, _LOADED, __bundle_register, __
                     background_color, circle_color, item.pct)
 
                 local text_color = color_t(.75, .75, .75, 1):lerp(color_t(.92, .92, .92, 1), item.pct):alpha_modulate(
-                    alpha)
+                alpha)
 
                 render.text(item.name, FONTS.ITEMS, vec2_t(pos.x, pos.y - .5), text_color)
 
@@ -6291,7 +6774,7 @@ __bundle_register("render/gui", function(require, _LOADED, __bundle_register, __
                             end
 
                             item.value = item.value:sub(1, item.cursor_pos - 1) ..
-                                symbol .. item.value:sub(item.cursor_pos)
+                            symbol .. item.value:sub(item.cursor_pos)
                             item.cursor_pos = item.cursor_pos + 1
                             text_changed = true
                         end
@@ -7149,12 +7632,8 @@ __bundle_register("render/gui", function(require, _LOADED, __bundle_register, __
 
                                 if instanceof == slider then
                                     if item.offset_pct > 0.1 then
-                                        local mouse_data = {
-                                            is_lmb = is_lmb,
-                                            is_left_button = is_left_button,
-                                            pos =
-                                                mouse
-                                        }
+                                        local mouse_data = { is_lmb = is_lmb, is_left_button = is_left_button, pos =
+                                        mouse }
                                         local add, gear_data = gui_render:slider(item, vec2_t(x, y), column_width,
                                             item_alpha,
                                             mouse_data, false, true)
@@ -7170,12 +7649,8 @@ __bundle_register("render/gui", function(require, _LOADED, __bundle_register, __
 
                                 if instanceof == button then
                                     if item.offset_pct > 0.1 then
-                                        local mouse_data = {
-                                            is_lmb = is_lmb,
-                                            is_left_button = is_left_button,
-                                            pos =
-                                                mouse
-                                        }
+                                        local mouse_data = { is_lmb = is_lmb, is_left_button = is_left_button, pos =
+                                        mouse }
                                         local add = gui_render:button(item, vec2_t(x, y), column_width, item_alpha,
                                             mouse_data, false)
 
@@ -7490,7 +7965,7 @@ __bundle_register("render/gui", function(require, _LOADED, __bundle_register, __
 
                 local avatar_size = 15
                 local avatar_pos = position +
-                    vec2_t(avatar_size + PADDING * 1.5, size.current.y - avatar_size - PADDING * 2)
+                vec2_t(avatar_size + PADDING * 1.5, size.current.y - avatar_size - PADDING * 2)
 
                 render.circle_filled(avatar_pos, 15, 30, color_t(0.05, 0.05, 0.05, alpha))
                 local text_size = render.calc_text_size("?", FONTS.USERNAME)
@@ -8515,7 +8990,7 @@ __bundle_register("system/http", function(require, _LOADED, __bundle_register, _
                 return status_code, nil;
             else
                 local error_msg = "WinHttpQueryHeaders failed to retrieve status code. Error: " ..
-                    tostring(C.GetLastError());
+                tostring(C.GetLastError());
                 return -1, error_msg;
             end;
         end;
@@ -8994,10 +9469,15 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
             float x, y, z, w;
         } Vector4D;
 
+        typedef struct CMsgQAngle {
+            char pad_0x0[0x10];
+            uint32_t nHasBits;           // 0x10
+            char pad_0x14[0x4];          // 0x14
+            Vector vecValue;             // 0x18
+        } CMsgQAngle;
+
         typedef struct CMsgVector {
-            char pad_0x0[0x8];
-            uint32_t nHasBits;
-            uint64_t nCachedBits;
+            char pad_0x0[0x18];
             Vector4D vecValue;
         } CMsgVector;
 
@@ -9014,87 +9494,70 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
         } RepeatedPtrField;
 
         typedef struct CInButtonStatePB {
-            char pad_0x0[0x8];
-            uint32_t nHasBits;
-            uint64_t nCachedBits;
-            uint64_t nValue;
-            uint64_t nValueChanged;
-            uint64_t nValueScroll;
+            char pad_0x0[0x10];
+            uint32_t nHasBits;           // 0x10
+            char pad_0x14[0x4];          // 0x14
+            uint64_t nValue;             // 0x18
+            uint64_t nValueChanged;     // 0x20
+            uint64_t nValueScroll;       // 0x28
         } CInButtonStatePB;
 
         typedef struct CBaseUserCmdPB {
-            char pad_0x0[0x8];
-            uint32_t nHasBits;
-            uint64_t nCachedBits;
-            RepeatedPtrField subtickMovesField;
-            const char* strMoveCrc;
-            CInButtonStatePB* pInButtonState;
-            CMsgVector* pViewAngles;
-            int32_t nLegacyCommandNumber;
-            int32_t nClientTick;
-            float flForwardMove;
-            float flSideMove;
-            float flUpMove;
-            int32_t nImpulse;
-            int32_t nWeaponSelect;
-            int32_t nRandomSeed;
-            int32_t nMousedX;
-            int32_t nMousedY;
-            uint32_t nConsumedServerAngleChanges;
-            int32_t nCmdFlags;
-            uint32_t hPawn;
+            char pad_0x0[0x10];
+            uint32_t nHasBits;           // 0x10
+            char pad_0x14[0x4];          // 0x14
+            char pad_subtick[0x18];      // 0x18 (subtick_moves)
+            const char* strMoveCrc;      // 0x30 (move_crc)
+            CInButtonStatePB* pInButtonState; // 0x38 (buttons_pb)
+            CMsgQAngle* pViewAngles;     // 0x40 (viewangles)
+            void* pExecutionNotes;       // 0x48 (execution_notes)
+            int32_t nLegacyCommandNumber;// 0x50
+            int32_t nClientTick;         // 0x54
+            float flForwardMove;         // 0x58
+            float flSideMove;            // 0x5C (leftmove)
+            float flUpMove;              // 0x60 (upmove)
+            int32_t nImpulse;            // 0x64
+            int32_t nWeaponSelect;       // 0x68
+            int32_t nRandomSeed;         // 0x6C
+            int32_t nMousedX;            // 0x70
+            int32_t nMousedY;            // 0x74
+            uint32_t nPredictionOffsetTicks; // 0x78
+            uint32_t nConsumedServerAngleChanges; // 0x7C
+            int32_t nCmdFlags;           // 0x80
+            uint32_t hPawn;              // 0x84
         } CBaseUserCmdPB;
 
         typedef struct CInButtonState {
-            char pad_0x0[0x8];
-            uint64_t nValue;
-            uint64_t nValueChanged;
-            uint64_t nValueScroll;
+            char pad_0x0[0x8];           // 0x58
+            uint64_t nValue;             // 0x60
+            uint64_t nValueChanged;     // 0x68
+            uint64_t nValueScroll;       // 0x70
         } CInButtonState;
 
         typedef struct CUserCmd {
-            char pad_0x0[0x18];
-            uint32_t nHasBits;
-            uint64_t nCachedBits;
-            RepeatedPtrField inputHistoryField;
-            CBaseUserCmdPB* pBaseCmd;
-            bool bLeftHandDesired;
-            bool bIsPredictingBodyShotFX;
-            bool bIsPredictingHeadShotFX;
-            bool bIsPredictingKillRagdolls;
-            int32_t nAttack3StartHistoryIndex;
-            int32_t nAttack1StartHistoryIndex;
-            int32_t nAttack2StartHistoryIndex;
-            CInButtonState nButtons;
-            char pad_0x58[0x20];
+            void** vtable;               // 0x00
+            int64_t m_nCommandNumber;    // 0x08
+            char pad_csgo_cmd[0x10];     // 0x10
+            uint32_t csgo_cmd_has_bits;  // 0x20
+            char pad_input_hist[0x1C];   // 0x24..0x40
+            CBaseUserCmdPB* pBaseCmd;    // 0x40
+            char pad_indexes[0x4];       // 0x48..0x4C
+            int32_t nAttack1StartHistoryIndex; // 0x4C
+            int32_t nAttack2StartHistoryIndex; // 0x50
+            char pad_indexes2[0x4];      // 0x54..0x58
+            CInButtonState nButtons;     // 0x58
+            char pad_end[0x1C];          // 0x78..0x94
+            int32_t m_nSubtickState;     // 0x94
         } CUserCmd;
-
-        typedef struct {
-            char pad_0000[0x04D8];
-            float m_fov;
-            float m_viewmodel_fov;
-            float m_origin_x;
-            float m_origin_y;
-            float m_origin_z;
-            char pad_04EC[0xC];
-            float m_angles_x;
-            float m_angles_y;
-            float m_angles_z;
-            char pad_0504[0x14];
-            float m_aspect_ratio;
-        } CViewSetup;
     ]]
 
-        local Source2Client002 = utils.create_interface("client.dll", "Source2Client002")
+        -- local Source2Client002 = utils.create_interface("client.dll", "Source2Client002")
 
         local fnCreateMove, GetUserCmd; do
             fnCreateMove = assert(find_pattern("client.dll", "E9 ?? ?? ?? ?? ?? ?? ?? 48 8B C4 44 88 40 18"),
                 "fnCreateMove outdated") -- // @xref: client.dll @ cl: %d ===========================
 
             local fnGetCommandIndex; do
-                -- GetUserCmdSequence (cs2-sdk build 14184, client.dll +0x9416F0)
-                -- читает номер текущей команды из ring + 0x5910.
-                -- паттерн матчится прямо в начале функции, никакого resolve call'а не нужно.
                 local address = assert(opcode_scan("client.dll",
                         "48 83 EC 28 E8 ?? ?? ?? ?? 8B 80 10 59 00 00 48 83 C4 28 C3"),
                     "fnGetCommandIndex outdated")
@@ -9102,85 +9565,62 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
                 fnGetCommandIndex = ffi.cast("void*(__fastcall*)(void*, int*)", address)
             end
 
-            local fnGetUserCmdBase; do
-                -- GetCUserCmdArray (cs2-sdk build 14184, client.dll +0x944720)
-                -- proto: __int64 __fastcall GetCUserCmdArray(__int64 a1 /*CCSGOInput*/, int a2 /*cmd index*/)
-                local address = assert(opcode_scan("client.dll",
-                        "48 89 4C 24 08 41 56 41 57 48 83 EC 48 4C 63 FA 4C 8B F1"),
-                    "fnGetUserCmdBase outdated")
+            --         local fnGetUserCmdBase; do
+            --             local address = assert(
+            --                 find_pattern("client.dll", "48 89 4C 24 08 41 56 41 57 48 83 EC 48 4C 63 FA 4C 8B F1"),
+            --                 "fnGetUserCmdBase outdated")
+            --
+            --             fnGetUserCmdBase = ffi.cast("void*(__fastcall*)(void*, int)", address)
+            --         end
 
-                fnGetUserCmdBase = ffi.cast("void*(__fastcall*)(void*, int)", address)
+            local fnGetSequenceNumber; do
+                local address = assert(opcode_scan("client.dll",
+                        "48 83 EC 28 E8 ?? ?? ?? ?? 8B 80 10 59 00 00 48 83 C4 28 C3"),
+                    "fnGetSequenceNumber outdated")
+                fnGetSequenceNumber = ffi.cast("int(__fastcall*)(void*)", address)
             end
 
-            -- GetCUserCmdBySequenceNumber (cs2-sdk build 14184, client.dll +0x944500)
-            -- proto: __int64 __fastcall GetCUserCmdBySequenceNumber(__int64 a1 /*controller*/, int a2 /*sequence*/)
             local fnGetUserCmd = ffi.cast("CUserCmd*(__fastcall*)(void*, int)",
-                assert(opcode_scan("client.dll", "40 53 48 83 EC ? 8B DA E8 ? ? ? ? 4C 8B C0"),
+                assert(opcode_scan("client.dll", "40 53 48 83 EC ?? 8B DA E8 ?? ?? ?? ?? 4C 8B C0"),
                     "fnGetUserCmd: outdated"))
 
-            local pClientInput = (function()
-                -- CInputPtrGlobal (alias pCSGOInput) - cs2-sdk build 14184, client.dll +0x2236440
-                local pBase = assert(opcode_scan("client.dll", "48 8B 0D ?? ?? ?? ?? 4C 8D 47 14"),
-                    "pClientInput outdated")
-                return ffi.cast("void**", pBase + 7 + ffi.cast("int*", pBase + 3)[0])[0]
-            end)()
+            -- local pClientInput = (function()
+            --     local pBase = assert(opcode_scan("client.dll", "48 8B 0D ?? ?? ?? ?? 4C 8D 47 14"),
+            --         "pClientInput outdated")
+            --     return ffi.cast("void**", pBase + 7 + ffi.cast("int*", pBase + 3)[0])[0]
+            -- end)()
 
             GetUserCmd = function()
-                local pLocalPlayer = entitylist.get_local_player_controller();
-                if not pLocalPlayer then
+                local pLocalPlayer = entitylist.get_local_player_controller()
+                if not pLocalPlayer or pLocalPlayer[0] == NULLPTR then
                     return false
                 end
-
-                local pCommandIndex = ffi.new "int[1]"
-                fnGetCommandIndex(pLocalPlayer[0], pCommandIndex)
-                if pCommandIndex[0] == 0 then
-                    return false
-                end
-
-                local nCurrentCommand = pCommandIndex[0] - 1
-                local pUserCmdBase = fnGetUserCmdBase(pClientInput, nCurrentCommand)
-                if pUserCmdBase == NULLPTR then
-                    return false
-                end
-
-                local nSequenceNumber = ffi.cast("int*", ffi.cast("uintptr_t", pUserCmdBase) + 0x5910)[0];
+                local nSequenceNumber = fnGetSequenceNumber(pLocalPlayer[0])
                 if nSequenceNumber <= 0 then
                     return false
                 end
-
-                local pUserCmd = fnGetUserCmd(pLocalPlayer[0], nSequenceNumber);
+                local pUserCmd = fnGetUserCmd(pLocalPlayer[0], nSequenceNumber)
                 if pUserCmd == NULLPTR then
                     return false
                 end
-
                 return pUserCmd
             end
         end
 
-        -- HandleTeamIntro (cs2-sdk build 14184, client.dll +0x76E5B0)
         local fnTeamIntro = assert(find_pattern("client.dll", "48 83 EC ? ? ? ? ? 44 38 89"), "fnTeamIntro outdated")
-        -- RunPrediction (cs2-sdk build 14184, engine2.dll +0x655E0)
-        local fnRunPrediction = assert(find_pattern("engine2.dll", "40 55 41 56 48 83 EC ? 80 B9"),
-            "fnRunPrediction outdated") -- // @xref: engine2.dll @ "CNetworkGameClient::ClientSidePredict", "%i pred reason %s -- start (latest command created %d)\n", "%i pred reason %s -- finish\n"
-        -- DrawScopeOverlay (cs2-sdk build 14184, client.dll +0x8E1590)
-        -- proto: float* __fastcall DrawScopeOverlay(__int64 a1, __int64 a2)  -- ClientModeCSNormal > 27
+        -- local fnRunPrediction = assert(find_pattern("engine2.dll", "40 55 41 56 48 83 EC ?? 80 B9"),
+        --     "fnRunPrediction outdated") -- // @xref: engine2.dll @ "CNetworkGameClient::ClientSidePredict", "%i pred reason %s -- start (latest command created %d)\n", "%i pred reason %s -- finish\n"
         local fnScopeOverlay = assert(find_pattern("client.dll", "48 8B C4 53 57 48 83 EC ? 48 8B FA"),
-            "fnScopeOverlay outdated")
+            "fnScopeOverlay outdated") -- // ClientModeCSNormal > 27
 
-        -- CLoggingSystem::LogDirect - tier0.dll (в дампе cs2-sdk его нет, но паттерн жив:
-        -- локально ровно 1 совпадение, tier0+0x127CD0). Подтверждено независимо:
-        -- SwiftlyS2 (gamedata/cs2/core/signatures.jsonc) и modsharp-public (log.games.jsonc).
-        -- proto: Log(LoggingChannelID_t, LoggingSeverity_t, Color, const char* fmt, ...)
         local fnLogSystem = assert(find_pattern("tier0.dll", "4C 89 4C 24 ? 44 89 44 24 ? 89 54 24 ? 55"),
             "fnLogSsytem outdated") -- //xref: %s():\n%s, Exiting due to logging LR_ABORT request.\n
 
         -- котакбасина туда встань
         -- local fnOverrideView = assert(opcode_scan("client.dll", "48 89 5C 24 10 55 48 8D 6C 24 A9 48 81 EC B0 00 00 00"), "fnOverrideView outdated") -- // ClientModeShared > 15
-        local fnFrameStageNotify = vmt.get_v_method(Source2Client002, 36) -- // @xref: STR: "Client Restore Server State", "FrameNetUpdate(%.3f %d)", "FramePostDataUpdate(%.3f %d)", "C:\buildworker\csgo_rel_win64\build\src\game\client\cdll_client_int.cpp"
-        -- LevelInit (cs2-sdk build 14184, client.dll +0x9599C0)
+        -- local fnFrameStageNotify = vmt.get_v_method(Source2Client002, 36) -- // @xref: STR: "Client Restore Server State", "FrameNetUpdate(%.3f %d)", "FramePostDataUpdate(%.3f %d)", "C:\buildworker\csgo_rel_win64\build\src\game\client\cdll_client_int.cpp"
         local fnLevelInit = assert(find_pattern("client.dll", "40 55 56 41 56 48 8D 6C 24 ? 48 81 EC ? ? ? ? 48"),
             "fnLevelInit outdated") -- // @xref: game_newmap, mapname
-        -- ClientModeShared_LevelShutdown (alias LevelShutdown) - cs2-sdk build 14184, client.dll +0xB98440
         local fnLevelShutdown = assert(
             find_pattern("client.dll",
                 "48 83 EC 28 48 8B 0D ? ? ? ? 48 8D 15 ? ? ? ? 45 33 C9 45 33 C0 48 8B 01 FF 50 30 48 85 C0 74 ? 48 8B 0D ? ? ? ? 48 8B D0 4C 8B 01 41 FF 50 40 48 83 C4 28"),
@@ -9193,61 +9633,98 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
         }
 
         local buttons = {
-            IN_ATTACK = bit.lshift(1, 0),
-            IN_JUMP = bit.lshift(1, 1),
-            IN_DUCK = bit.lshift(1, 2),
-            IN_FORWARD = bit.lshift(1, 3),
-            IN_BACK = bit.lshift(1, 4),
-            IN_USE = bit.lshift(1, 5),
-            UNKNOWN0 = bit.lshift(1, 6),
-            IN_TURNLEFT = bit.lshift(1, 7),
-            IN_TURNRIGHT = bit.lshift(1, 8),
-            IN_MOVELEFT = bit.lshift(1, 9),
-            IN_MOVERIGHT = bit.lshift(1, 10),
-            IN_ATTACK2 = bit.lshift(1, 11),
-            UNKNOWN1 = bit.lshift(1, 12),
-            IN_RELOAD = bit.lshift(1, 13),
-            IN_SPEED = bit.lshift(1, 16),
-            IN_JOYAUTOSPRINT = bit.lshift(1, 17),
-            IN_USEORRELOAD = bit.lshift(1, 32),
-            IN_SCORE = bit.lshift(1, 33),
-            IN_ZOOM = bit.lshift(1, 34),
-            IN_JUMP_THROW_RELEASE = bit.lshift(1, 35)
+            IN_ATTACK = 0x1,
+            IN_JUMP = 0x2,
+            IN_DUCK = 0x4,
+            IN_FORWARD = 0x8,
+            IN_BACK = 0x10,
+            IN_USE = 0x20,
+            UNKNOWN0 = 0x40,
+            IN_TURNLEFT = 0x80,
+            IN_TURNRIGHT = 0x100,
+            IN_MOVELEFT = 0x200,
+            IN_MOVERIGHT = 0x400,
+            IN_ATTACK2 = 0x800,
+            UNKNOWN1 = 0x1000,
+            IN_RELOAD = 0x2000,
+            IN_SPEED = 0x10000,
+            IN_JOYAUTOSPRINT = 0x20000,
+            IN_USEORRELOAD = 0x100000000,
+            IN_SCORE = 0x200000000,
+            IN_ZOOM = 0x400000000,
+            IN_JUMP_THROW_RELEASE = 0x800000000
         }
 
-        local has = function(cmd_wrapper, value)
-            if not cmd_wrapper or not cmd_wrapper[0] then return false end
-            local current = cmd_wrapper[0].nButtons.nValue
-            return current % (value * 2) >= value
+        local function u64_has(val64, mask64)
+            local low_val = tonumber(ffi.cast("uint32_t", val64))
+            local high_val = tonumber(ffi.cast("uint32_t", val64 / 0x100000000))
+            local low_mask = tonumber(ffi.cast("uint32_t", mask64))
+            local high_mask = tonumber(ffi.cast("uint32_t", mask64 / 0x100000000))
+            return (bit.band(low_val, low_mask) ~= 0) or (bit.band(high_val, high_mask) ~= 0)
         end
-
+        local function u64_set(val64, mask64)
+            local low_val = tonumber(ffi.cast("uint32_t", val64))
+            local high_val = tonumber(ffi.cast("uint32_t", val64 / 0x100000000))
+            local low_mask = tonumber(ffi.cast("uint32_t", mask64))
+            local high_mask = tonumber(ffi.cast("uint32_t", mask64 / 0x100000000))
+            local new_low = ffi.cast("uint64_t", ffi.cast("uint32_t", bit.bor(low_val, low_mask)))
+            local new_high = ffi.cast("uint64_t", ffi.cast("uint32_t", bit.bor(high_val, high_mask)))
+            return new_low + new_high * 0x100000000
+        end
+        local function u64_clear(val64, mask64)
+            local low_val = tonumber(ffi.cast("uint32_t", val64))
+            local high_val = tonumber(ffi.cast("uint32_t", val64 / 0x100000000))
+            local low_mask = tonumber(ffi.cast("uint32_t", mask64))
+            local high_mask = tonumber(ffi.cast("uint32_t", mask64 / 0x100000000))
+            local new_low = ffi.cast("uint64_t", ffi.cast("uint32_t", bit.band(low_val, bit.bnot(low_mask))))
+            local new_high = ffi.cast("uint64_t", ffi.cast("uint32_t", bit.band(high_val, bit.bnot(high_mask))))
+            return new_low + new_high * 0x100000000
+        end
+        local function sync_pb_buttons(raw)
+            if raw and raw.pBaseCmd ~= NULLPTR and raw.pBaseCmd ~= nil then
+                local pb = raw.pBaseCmd
+                if pb.pInButtonState ~= NULLPTR and pb.pInButtonState ~= nil then
+                    local btn_pb = pb.pInButtonState
+                    btn_pb.nValue = raw.nButtons.nValue
+                    btn_pb.nValueChanged = raw.nButtons.nValueChanged
+                    btn_pb.nValueScroll = raw.nButtons.nValueScroll
+                    btn_pb.nHasBits = bit.bor(btn_pb.nHasBits, 0x7)
+                    pb.nHasBits = bit.bor(pb.nHasBits, 0x2)
+                end
+            end
+        end
         local bits = {
-            has = has,
-
-            add = function(cmd_wrapper, value)
-                if not has(cmd_wrapper, value) then
-                    cmd_wrapper[0].nButtons.nValue = cmd_wrapper[0].nButtons.nValue + value
-                end
+            has = function(cmd_wrapper, value)
+                if not cmd_wrapper or not cmd_wrapper[0] or not value then return false end
+                return u64_has(cmd_wrapper[0].nButtons.nValue, value)
             end,
-
+            add = function(cmd_wrapper, value)
+                if not cmd_wrapper or not cmd_wrapper[0] or not value then return end
+                local raw = cmd_wrapper[0]
+                raw.nButtons.nValue = u64_set(raw.nButtons.nValue, value)
+                raw.nButtons.nValueChanged = u64_set(raw.nButtons.nValueChanged, value)
+                sync_pb_buttons(raw)
+            end,
             remove = function(cmd_wrapper, value)
-                if has(cmd_wrapper, value) then
-                    local raw = cmd_wrapper[0]
-                    raw.nButtons.nValue = raw.nButtons.nValue - value
-
-                    if raw.nButtons.nValueChanged % (value * 2) >= value then
-                        raw.nButtons.nValueChanged = raw.nButtons.nValueChanged - value
-                    end
-                    if raw.nButtons.nValueScroll % (value * 2) >= value then
-                        raw.nButtons.nValueScroll = raw.nButtons.nValueScroll - value
-                    end
+                if not cmd_wrapper or not cmd_wrapper[0] or not value then return end
+                local raw = cmd_wrapper[0]
+                raw.nButtons.nValue = u64_clear(raw.nButtons.nValue, value)
+                raw.nButtons.nValueChanged = u64_clear(raw.nButtons.nValueChanged, value)
+                raw.nButtons.nValueScroll = u64_clear(raw.nButtons.nValueScroll, value)
+                if value == buttons.IN_ATTACK then
+                    raw.nAttack1StartHistoryIndex = -1
+                elseif value == buttons.IN_ATTACK2 then
+                    raw.nAttack2StartHistoryIndex = -1
                 end
+                sync_pb_buttons(raw)
             end
         }
 
         local usercmd = {}; do
             local cmd_mt = {}; do
                 cmd_mt.__index = function(self, key)
+                    if not self[0] then return nil end
+
                     if key == "buttons" then
                         return self[0].nButtons.nValue
                     end
@@ -9256,68 +9733,99 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
                         return self[0].pBaseCmd
                     end
 
-                    if key == "weaponselect" then
-                        return self[0].pBaseCmd.nWeaponSelect
+                    if key:find "in_" then
+                        local ukey = key:upper()
+                        return bits.has(self, buttons[ukey]) and 1 or 0
                     end
 
-                    if key:find "in_" then
-                        local key = key:upper()
-                        return bits.has(self, buttons[key]) and 1 or 0
+                    local pb = self[0].pBaseCmd
+                    if pb == NULLPTR or pb == nil then return nil end
+
+                    if key == "weaponselect" then
+                        return pb.nWeaponSelect
                     end
 
                     if key == "forwardmove" then
-                        return self[0].pBaseCmd.flForwardMove
+                        return pb.flForwardMove
                     end
 
                     if key == "sidemove" then
-                        return self[0].pBaseCmd.flSideMove
+                        return pb.flSideMove
+                    end
+
+                    if key == "upmove" then
+                        return pb.flUpMove
                     end
 
                     if key == "view_angles" then
-                        local angles = self[0].pBaseCmd.pViewAngles.vecValue
-                        return angle_t(angles.x, angles.y, angles.z)
+                        if pb.pViewAngles ~= NULLPTR and pb.pViewAngles ~= nil then
+                            local angles = pb.pViewAngles.vecValue
+                            return angle_t(angles.x, angles.y, angles.z)
+                        end
                     end
                 end
 
                 cmd_mt.__newindex = function(self, key, value)
+                    if not self[0] then return end
+
                     if key == "buttons" then
                         self[0].nButtons.nValue = value
                         self[0].nButtons.nValueChanged = value
                         self[0].nButtons.nValueScroll = value
+                        sync_pb_buttons(self[0])
                         return
                     end
 
-                    if key == "weaponselect" then
-                        self[0].pBaseCmd.nWeaponSelect = value
+                    if key:find "in_" then
+                        local ukey = key:upper()
+                        local btn = buttons[ukey]
+                        if btn then
+                            if value == 1 or value == true then
+                                bits.add(self, btn)
+                            elseif value == 0 or value == false then
+                                bits.remove(self, btn)
+                            end
+                        end
+                        return
                     end
 
-                    if key:find "in_" then
-                        local key = key:upper()
+                    local pb = self[0].pBaseCmd
+                    if pb == NULLPTR or pb == nil then return end
 
-                        if value == 1 then
-                            bits.add(self, buttons[key])
-                        elseif value == 0 then
-                            bits.remove(self, buttons[key])
-                        end
+                    if key == "weaponselect" then
+                        pb.nWeaponSelect = value
+                        pb.nHasBits = bit.bor(pb.nHasBits, 0x100)
+                        return
                     end
 
                     if key == "forwardmove" then
-                        self[0].pBaseCmd.flForwardMove = value
+                        pb.flForwardMove = value
+                        pb.nHasBits = bit.bor(pb.nHasBits, 0x40)
                         return
                     end
 
                     if key == "sidemove" then
-                        self[0].pBaseCmd.flSideMove = value
+                        pb.flSideMove = value
+                        pb.nHasBits = bit.bor(pb.nHasBits, 0x80)
+                        return
+                    end
+
+                    if key == "upmove" then
+                        pb.flUpMove = value
+                        pb.nHasBits = bit.bor(pb.nHasBits, 0x100)
                         return
                     end
 
                     if key == "view_angles" then
                         local angles = value
-
-                        self[0].pBaseCmd.pViewAngles.vecValue.x = angles.pitch
-                        self[0].pBaseCmd.pViewAngles.vecValue.y = angles.yaw
-                        self[0].pBaseCmd.pViewAngles.vecValue.z = angles.roll
-
+                        if pb.pViewAngles ~= NULLPTR and pb.pViewAngles ~= nil then
+                            local pAngles = pb.pViewAngles
+                            pAngles.vecValue.x = angles.pitch
+                            pAngles.vecValue.y = angles.yaw
+                            pAngles.vecValue.z = angles.roll
+                            pAngles.nHasBits = bit.bor(pAngles.nHasBits, 0x7)
+                            pb.nHasBits = bit.bor(pb.nHasBits, 0x4)
+                        end
                         return
                     end
 
@@ -9434,12 +9942,10 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
             o_fn(pCCSGOInput, slot, active);
 
             local o_cmd = GetUserCmd()
+            if not o_cmd then return end
 
             local cmd = usercmd(o_cmd)
-
-            if cmd then
-                call_handlers("createmove", cmd, slot, active)
-            end
+            call_handlers("createmove", cmd, slot, active)
         end
 
         local function hkTeamIntro(o_fn, rcx, rdx, r8)
@@ -9535,15 +10041,15 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
 
 
         local hooked_events = {
-            "createmove",
-            "team_intro",
-            -- "run_prediction",
-            "scope_overlay",
-            -- "override_view",
-            "frame_stage_notify",
-            -- "should_draw_legs",
-            "level_init",
-            -- "log_system"
+            createmove = true,
+            team_intro = true,
+            -- run_prediction = true,
+            scope_overlay = true,
+            -- override_view = true,
+            frame_stage_notify = true,
+            -- should_draw_legs = true,
+            level_init = true,
+            level_shutdown = true
         }
 
         local function create_event_handler(event_name)
