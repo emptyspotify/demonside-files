@@ -356,64 +356,64 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                     }
                 end)
 
-                -- general.agent_changer = general:switch("Agent Changer", false, function(gear)
-                --     return {
-                --         terrorist = gear:selectable("Terrorist", { "Getaway Sally | The Professionals",
-                --             "Number K | The Professionals",
-                --             "Little Kev | The Professionals",
-                --             "Safecracker Voltzmann | The Professionals",
-                --             "Bloody Darryl The Strapped | The Professionals",
-                --             "Sir Bloody Loudmouth Darryl | The Professionals",
-                --             "Sir Bloody Darryl Royale | The Professionals",
-                --             "Sir Bloody Skullhead Darryl | The Professionals",
-                --             "Sir Bloody Silent Darryl | The Professionals",
-                --             "Sir Bloody Miami Darryl | The Professionals",
-                --             "Street Soldier | Phoenix",
-                --             "Soldier | Phoenix",
-                --             "Slingshot | Phoenix",
-                --             "Enforcer | Phoenix",
-                --             "Mr. Muhlik | Elite Crew",
-                --             "Prof. Shahmat | Elite Crew",
-                --             "Osiris | Elite Crew",
-                --             "Jungle Rebel | Elite Crew",
-                --             "Ground Rebel | Elite Crew",
-                --             "The Elite Mr. Muhlik | Elite Crew",
-                --             "Trapper | Guerrilla Warfare",
-                --             "Trapper Aggressor | Guerrilla Warfare",
-                --             "Vypa Sista of the Revolution | Guerrilla Warfare",
-                --             "Col. Mangos Dabisi | Guerrilla Warfare",
-                --             "Arno The Overgrown | Guerrilla Warfare",
-                --             "'Medium Rare' Crasswater | Guerrilla Warfare",
-                --             "Crasswater The Forgotten | Guerrilla Warfare",
-                --             "Elite Trapper Solman | Guerrilla Warfare",
-                --             "'The Doctor' Romanov | Sabre",
-                --             "Blackwolf | Sabre",
-                --             "Maximus | Sabre",
-                --             "Dragomir | Sabre",
-                --             "Rezan The Ready | Sabre",
-                --             "Rezan the Redshirt | Sabre",
-                --             "Dragomir | Sabre Footsoldier",
-                --             "Danger Zone | Variant A",
-                --             "Danger Zone | Variant B",
-                --             "Danger Zone | Variant C" }),
-                --         ["c-terrorist"] = gear:selectable("C-Terrorist",
-                --             { "Cmdr. Davida 'Goggles' Fernandez | SEAL Frogman",
-                --                 "Cmdr. Frank 'Wet Sox' Baroud | SEAL Frogman", "Lieutenant Rex Krikey | SEAL Frogman",
-                --                 "Michael Syfers | FBI Sniper", "Operator | FBI SWAT", "Special Agent Ava | FBI",
-                --                 "Markus Delrow | FBI HRT", "Sous-Lieutenant Medic | Gendarmerie Nationale",
-                --                 "Chem-Haz Capitaine | Gendarmerie Nationale",
-                --                 "Chef d'Escadron Rouchard | Gendarmerie Nationale", "Aspirant | Gendarmerie Nationale",
-                --                 "Officer Jacques Beltram | Gendarmerie Nationale", "D Squadron Officer | NZSAS",
-                --                 "B Squadron Officer | SAS", "Seal Team 6 Soldier | NSWC SEAL", "Buckshot | NSWC SEAL",
-                --                 "Lt. Commander Ricksaw | NSWC SEAL", "'Blueberries' Buckshot | NSWC SEAL",
-                --                 "3rd Commando Company | KSK", "'Two Times' McCoy | TACP Cavalry",
-                --                 "'Two Times' McCoy | USAF TACP", "Primeiro Tenente | Brazilian 1st Battalion",
-                --                 "Cmdr. Mae 'Dead Cold' Jamison | SWAT", "1st Lieutenant Farlow | SWAT",
-                --                 "John 'Van Healen' Kask | SWAT", "Bio-Haz Specialist | SWAT",
-                --                 "Sergeant Bombson | SWAT", "Chem-Haz Specialist | SWAT",
-                --                 "Lieutenant 'Tree Hugger' Farlow | SWAT" })
-                --     }
-                -- end)
+                general.agent_changer = general:switch("Agent Changer", false, function(gear)
+                    return {
+                        terrorist = gear:selectable("Terrorist", { "Getaway Sally | The Professionals",
+                            "Number K | The Professionals",
+                            "Little Kev | The Professionals",
+                            "Safecracker Voltzmann | The Professionals",
+                            "Bloody Darryl The Strapped | The Professionals",
+                            "Sir Bloody Loudmouth Darryl | The Professionals",
+                            "Sir Bloody Darryl Royale | The Professionals",
+                            "Sir Bloody Skullhead Darryl | The Professionals",
+                            "Sir Bloody Silent Darryl | The Professionals",
+                            "Sir Bloody Miami Darryl | The Professionals",
+                            "Street Soldier | Phoenix",
+                            "Soldier | Phoenix",
+                            "Slingshot | Phoenix",
+                            "Enforcer | Phoenix",
+                            "Mr. Muhlik | Elite Crew",
+                            "Prof. Shahmat | Elite Crew",
+                            "Osiris | Elite Crew",
+                            "Jungle Rebel | Elite Crew",
+                            "Ground Rebel | Elite Crew",
+                            "The Elite Mr. Muhlik | Elite Crew",
+                            "Trapper | Guerrilla Warfare",
+                            "Trapper Aggressor | Guerrilla Warfare",
+                            "Vypa Sista of the Revolution | Guerrilla Warfare",
+                            "Col. Mangos Dabisi | Guerrilla Warfare",
+                            "Arno The Overgrown | Guerrilla Warfare",
+                            "'Medium Rare' Crasswater | Guerrilla Warfare",
+                            "Crasswater The Forgotten | Guerrilla Warfare",
+                            "Elite Trapper Solman | Guerrilla Warfare",
+                            "'The Doctor' Romanov | Sabre",
+                            "Blackwolf | Sabre",
+                            "Maximus | Sabre",
+                            "Dragomir | Sabre",
+                            "Rezan The Ready | Sabre",
+                            "Rezan the Redshirt | Sabre",
+                            "Dragomir | Sabre Footsoldier",
+                            "Danger Zone | Variant A",
+                            "Danger Zone | Variant B",
+                            "Danger Zone | Variant C" }),
+                        ["c-terrorist"] = gear:selectable("C-Terrorist",
+                            { "Cmdr. Davida 'Goggles' Fernandez | SEAL Frogman",
+                                "Cmdr. Frank 'Wet Sox' Baroud | SEAL Frogman", "Lieutenant Rex Krikey | SEAL Frogman",
+                                "Michael Syfers | FBI Sniper", "Operator | FBI SWAT", "Special Agent Ava | FBI",
+                                "Markus Delrow | FBI HRT", "Sous-Lieutenant Medic | Gendarmerie Nationale",
+                                "Chem-Haz Capitaine | Gendarmerie Nationale",
+                                "Chef d'Escadron Rouchard | Gendarmerie Nationale", "Aspirant | Gendarmerie Nationale",
+                                "Officer Jacques Beltram | Gendarmerie Nationale", "D Squadron Officer | NZSAS",
+                                "B Squadron Officer | SAS", "Seal Team 6 Soldier | NSWC SEAL", "Buckshot | NSWC SEAL",
+                                "Lt. Commander Ricksaw | NSWC SEAL", "'Blueberries' Buckshot | NSWC SEAL",
+                                "3rd Commando Company | KSK", "'Two Times' McCoy | TACP Cavalry",
+                                "'Two Times' McCoy | USAF TACP", "Primeiro Tenente | Brazilian 1st Battalion",
+                                "Cmdr. Mae 'Dead Cold' Jamison | SWAT", "1st Lieutenant Farlow | SWAT",
+                                "John 'Van Healen' Kask | SWAT", "Bio-Haz Specialist | SWAT",
+                                "Sergeant Bombson | SWAT", "Chem-Haz Specialist | SWAT",
+                                "Lieutenant 'Tree Hugger' Farlow | SWAT" })
+                    }
+                end)
 
                 -- general.skybox_changer = general:switch("Skybox Chagner", false, function (gear)
                 --     return {
@@ -599,6 +599,21 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                     return {
                         density = gear:slider("Density", 0, 200, 100, "%d%%"),
                         speed = gear:slider("Speed", 0, 300, 100, "%d%%"),
+                    }
+                end)
+
+                in_game.bloom = in_game:switch("Bloom", false, function(gear)
+                    return {
+                        scale = gear:slider("Scale", 0, 500, 100, "%d%%"),
+                        threshold = gear:slider("Threshold", 0, 300, 100, "%d%%"),
+                        width = gear:slider("Width", 0, 300, 100, "%d%%"),
+                        skybox = gear:slider("Skybox", 0, 300, 100, "%d%%"),
+                    }
+                end)
+
+                in_game.gamma = in_game:switch("Gamma", false, function(gear)
+                    return {
+                        amount = gear:slider("Amount", 0, 500, 100, "%d%%"),
                     }
                 end)
 
@@ -2483,17 +2498,30 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
 
             local effect_map = {
                 ["Ash"] = { "bin/falling_ember1.vpcf", "bin/falling_ember2.vpcf" },
-                ["Rain"] = "particles/rain_fx/rain_single_800.vpcf",
+                ["Rain"] = {
+                    "particles/rain_fx/rain_single_800.vpcf",
+                    "particles/rain_fx/rain_single_800.vpcf",
+                    "particles/rain_fx/rain_single_800.vpcf",
+                    "particles/rain_fx/rain_single_800.vpcf",
+                },
                 ["Snow"] = "bin/falling_snow1.vpcf",
                 ["Stars"] = "bin/nomove_stars.vpcf",
             }
 
-            local last_effect_index = nil
-            local last_effect_index2 = nil
+            local effect_indices = {}
             local last_selected = ""
             local last_update = -1
 
             local fade_factor = 0
+
+            local function clear_effects()
+                for i = 1, #effect_indices do
+                    if effect_indices[i] then
+                        particle_manager:destroy_particle(effect_indices[i])
+                        effect_indices[i] = nil
+                    end
+                end
+            end
 
             function world_effects.paint()
                 local me = entitylist.get_local_player_pawn()
@@ -2511,66 +2539,39 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
 
                 if fade_factor == 0 then
                     last_selected = ""
-                    if last_effect_index then
-                        particle_manager:destroy_particle(last_effect_index)
-                        last_effect_index = nil
-                    end
-                    if last_effect_index2 then
-                        particle_manager:destroy_particle(last_effect_index2)
-                        last_effect_index2 = nil
-                    end
+                    clear_effects()
                     return
                 end
 
                 local effect = effect_map[weather:get()]
 
                 if last_selected ~= effect or last_update ~= game_rules.m_fRoundStartTime then
-                    if last_effect_index then
-                        particle_manager:destroy_particle(last_effect_index)
-                        last_effect_index = nil
-                    end
-                    if last_effect_index2 then
-                        particle_manager:destroy_particle(last_effect_index2)
-                        last_effect_index2 = nil
-                    end
+                    clear_effects()
 
                     last_selected = effect
                     last_update = game_rules.m_fRoundStartTime
 
-                    if type(effect) == "table" then
-                        if last_effect_index == nil then
-                            last_effect_index = particle_manager:create_particle_effect(effect[1])
-                        end
-                        if last_effect_index2 == nil then
-                            last_effect_index2 = particle_manager:create_particle_effect(effect[2])
-                        end
-                    else
-                        if last_effect_index == nil then
-                            last_effect_index = particle_manager:create_particle_effect(effect)
-                        end
+                    local list = type(effect) == "table" and effect or { effect }
+                    for i = 1, #list do
+                        effect_indices[i] = particle_manager:create_particle_effect(list[i])
                     end
                 end
-                local abs_origin = me:get_abs_origin()
 
-                if last_effect_index then
-                    particle_manager:set_position(last_effect_index, abs_origin)
-                    particle_manager:set_density(last_effect_index, density:get() * fade_factor)
-                end
-                if last_effect_index2 then
-                    particle_manager:set_position(last_effect_index2, abs_origin)
-                    particle_manager:set_density(last_effect_index2, density:get() * fade_factor)
+                local origin = me:get_abs_origin()
+                local is_rain = weather:get() == "Rain"
+                local pos = is_rain and vector(origin.x, origin.y, origin.z + 120) or origin
+
+                for i = 1, #effect_indices do
+                    local idx = effect_indices[i]
+                    if idx then
+                        particle_manager:set_position(idx, pos)
+                        particle_manager:set_density(idx, density:get() * fade_factor)
+                    end
                 end
             end
 
             function world_effects.unload()
-                if last_effect_index then
-                    particle_manager:destroy_particle(last_effect_index)
-                    last_effect_index = nil
-                end
-                if last_effect_index2 then
-                    particle_manager:destroy_particle(last_effect_index2)
-                    last_effect_index2 = nil
-                end
+                clear_effects()
             end
         end
 
@@ -2606,6 +2607,49 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                 shader.remove("rain_exposure_to_sky")
                 shader.remove("rain_wetness")
                 shader.remove("rain_timer")
+            end
+        end
+
+        local bloom = {}; do
+            local master = in_game.bloom
+
+            function bloom.paint()
+                if not master:get() then
+                    shader.remove("bloom_scale")
+                    shader.remove("bloom_threshold")
+                    shader.remove("bloom_width")
+                    shader.remove("bloom_skybox")
+                    return
+                end
+
+                shader.set("bloom_scale", master.scale:get() / 100.0)
+                shader.set("bloom_threshold", master.threshold:get() / 100.0)
+                shader.set("bloom_width", master.width:get() / 100.0)
+                shader.set("bloom_skybox", master.skybox:get() / 100.0)
+            end
+
+            function bloom.unload()
+                shader.remove("bloom_scale")
+                shader.remove("bloom_threshold")
+                shader.remove("bloom_width")
+                shader.remove("bloom_skybox")
+            end
+        end
+
+        local gamma = {}; do
+            local master = in_game.gamma
+
+            function gamma.paint()
+                if not master:get() then
+                    shader.remove("gamma")
+                    return
+                end
+
+                shader.set("gamma", master.amount:get() / 100.0)
+            end
+
+            function gamma.unload()
+                shader.remove("gamma")
             end
         end
 
@@ -2683,126 +2727,160 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
             end
         end
 
-        -- local agent_changer = {}; do
-        --     local models = {
-        --         terrorist = {
-        --             ["Getaway Sally | The Professionals"] = "tm_professional/tm_professional_varj",
-        --             ["Number K | The Professionals"] = "tm_professional/tm_professional_vari",
-        --             ["Little Kev | The Professionals"] = "tm_professional/tm_professional_varh",
-        --             ["Safecracker Voltzmann | The Professionals"] = "tm_professional/tm_professional_varg",
-        --             ["Bloody Darryl The Strapped | The Professionals"] = "tm_professional/tm_professional_varf5",
-        --             ["Sir Bloody Loudmouth Darryl | The Professionals"] = "tm_professional/tm_professional_varf4",
-        --             ["Sir Bloody Darryl Royale | The Professionals"] = "tm_professional/tm_professional_varf3",
-        --             ["Sir Bloody Skullhead Darryl | The Professionals"] = "tm_professional/tm_professional_varf2",
-        --             ["Sir Bloody Silent Darryl | The Professionals"] = "tm_professional/tm_professional_varf1",
-        --             ["Sir Bloody Miami Darryl | The Professionals"] = "tm_professional/tm_professional_varf",
+        local agent_changer = {}; do
+            local models = {
+                terrorist = {
+                    ["Getaway Sally | The Professionals"] = "tm_professional/tm_professional_varj",
+                    ["Number K | The Professionals"] = "tm_professional/tm_professional_vari",
+                    ["Little Kev | The Professionals"] = "tm_professional/tm_professional_varh",
+                    ["Safecracker Voltzmann | The Professionals"] = "tm_professional/tm_professional_varg",
+                    ["Bloody Darryl The Strapped | The Professionals"] = "tm_professional/tm_professional_varf",
+                    ["Sir Bloody Loudmouth Darryl | The Professionals"] = "tm_professional/tm_professional_varf1",
+                    ["Sir Bloody Darryl Royale | The Professionals"] = "tm_professional/tm_professional_varf2",
+                    ["Sir Bloody Skullhead Darryl | The Professionals"] = "tm_professional/tm_professional_varf3",
+                    ["Sir Bloody Silent Darryl | The Professionals"] = "tm_professional/tm_professional_varf4",
+                    ["Sir Bloody Miami Darryl | The Professionals"] = "tm_professional/tm_professional_varf5",
 
-        --             ["Street Soldier | Phoenix"] = "tm_phoenix/tm_phoenix_varianti",
-        --             ["Soldier | Phoenix"] = "tm_phoenix/tm_phoenix_varianth",
-        --             ["Slingshot | Phoenix"] = "tm_phoenix/tm_phoenix_variantg",
-        --             ["Enforcer | Phoenix"] = "tm_phoenix/tm_phoenix_variantf",
+                    ["Vypa Sista of the Revolution | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantb2",
+                    ["'Medium Rare' Crasswater | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantb",
+                    ["Crasswater The Forgotten | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_varianta",
+                    ["Elite Trapper Solman | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantc",
+                    ["Trapper | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantd",
+                    ["Col. Mangos Dabisi | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variante",
+                    ["Trapper Aggressor | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantf",
+                    ["Arno The Overgrown | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantb",
 
-        --             ["Mr. Muhlik | Elite Crew"] = "tm_leet/tm_leet_variantj",
-        --             ["Prof. Shahmat | Elite Crew"] = "tm_leet/tm_leet_varianti",
-        --             ["Osiris | Elite Crew"] = "tm_leet/tm_leet_varianth",
-        --             ["Jungle Rebel | Elite Crew"] = "tm_leet/tm_leet_variantj",
-        --             ["Ground Rebel | Elite Crew"] = "tm_leet/tm_leet_variantg",
-        --             ["The Elite Mr. Muhlik | Elite Crew"] = "tm_leet/tm_leet_variantf",
+                    ["Rezan The Ready | Sabre"] = "tm_balkan/tm_balkan_variantg",
+                    ["Rezan the Redshirt | Sabre"] = "tm_balkan/tm_balkan_varianth",
+                    ["Dragomir | Sabre"] = "tm_balkan/tm_balkan_varianti",
+                    ["Maximus | Sabre"] = "tm_balkan/tm_balkan_variantj",
+                    ["Blackwolf | Sabre"] = "tm_balkan/tm_balkan_variantk",
+                    ["Dragomir | Sabre Footsoldier"] = "tm_balkan/tm_balkan_variantl",
+                    ["The Doctor' Romanov | Sabre"] = "tm_balkan/tm_balkan_variantf",
+                    ["'The Doctor' Romanov | Sabre"] = "tm_balkan/tm_balkan_variantf",
 
-        --             ["Trapper | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantf2",
-        --             ["Trapper Aggressor | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantf",
-        --             ["Vypa Sista of the Revolution | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variante",
-        --             ["Col. Mangos Dabisi | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantd",
-        --             ["Arno The Overgrown | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantc",
-        --             ["'Medium Rare' Crasswater | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantb2",
-        --             ["Crasswater The Forgotten | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_variantb",
-        --             ["Elite Trapper Solman | Guerrilla Warfare"] = "tm_jungle_raider/tm_jungle_raider_varianta",
+                    ["Street Soldier | Phoenix"] = "tm_phoenix/tm_phoenix_varianti",
+                    ["Slingshot | Phoenix"] = "tm_phoenix/tm_phoenix_varianth",
+                    ["Enforcer | Phoenix"] = "tm_phoenix/tm_phoenix_variantf",
+                    ["Soldier | Phoenix"] = "tm_phoenix/tm_phoenix_variantg",
 
-        --             ["'The Doctor' Romanov | Sabre"] = "tm_balkan/tm_balkan_varianth",
-        --             ["Blackwolf | Sabre"] = "tm_balkan/tm_balkan_variantj",
-        --             ["Maximus | Sabre"] = "tm_balkan/tm_balkan_varianti",
-        --             ["Dragomir | Sabre"] = "tm_balkan/tm_balkan_variantf",
-        --             ["Rezan The Ready | Sabre"] = "tm_balkan/tm_balkan_variantg",
-        --             ["Rezan the Redshirt | Sabre"] = "tm_balkan/tm_balkan_variantk",
-        --             ["Dragomir | Sabre Footsoldier"] = "tm_balkan/tm_balkan_variantl",
+                    ["The Elite Mr. Muhlik | Elite Crew"] = "tm_leet/tm_leet_variantf",
+                    ["Mr. Muhlik | Elite Crew"] = "tm_leet/tm_leet_variantd",
+                    ["Prof. Shahmat | Elite Crew"] = "tm_leet/tm_leet_varianti",
+                    ["Osiris | Elite Crew"] = "tm_leet/tm_leet_varianth",
+                    ["Ground Rebel | Elite Crew"] = "tm_leet/tm_leet_variantg",
+                    ["Jungle Rebel | Elite Crew"] = "tm_leet/tm_leet_variantj",
 
-        --             ["Danger Zone | Variant A"] = "tm_jumpsuit/tm_jumpsuit_varianta",
-        --             ["Danger Zone | Variant B"] = "tm_jumpsuit/tm_jumpsuit_variantb",
-        --             ["Danger Zone | Variant C"] = "tm_jumpsuit/tm_jumpsuit_variantc"
-        --         },
-        --         ["c-terrorist"] = {
-        --             ["Cmdr. Davida 'Goggles' Fernandez | SEAL Frogman"] = "ctm_diver/ctm_diver_varianta",
-        --             ["Cmdr. Frank 'Wet Sox' Baroud | SEAL Frogman"] = "ctm_diver/ctm_diver_variantb",
-        --             ["Lieutenant Rex Krikey | SEAL Frogman"] = "ctm_diver/ctm_diver_variantc",
+                    ["Danger Zone | Variant A"] = "tm_jumpsuit/tm_jumpsuit_varianta",
+                    ["Danger Zone | Variant B"] = "tm_jumpsuit/tm_jumpsuit_variantb",
+                    ["Danger Zone | Variant C"] = "tm_jumpsuit/tm_jumpsuit_variantc"
+                },
 
-        --             ["Michael Syfers | FBI Sniper"] = "ctm_fbi/ctm_fbi_varianth",
-        --             ["Operator | FBI SWAT"] = "ctm_fbi/ctm_fbi_variantf",
-        --             ["Special Agent Ava | FBI"] = "ctm_fbi/ctm_fbi_variantb",
-        --             ["Markus Delrow | FBI HRT"] = "ctm_fbi/ctm_fbi_variantg",
+                ["c-terrorist"] = {
+                    ["Cmdr. Davida 'Goggles' Fernandez | SEAL Frogman"] = "ctm_diver/ctm_diver_varianta",
+                    ["Cmdr. Frank 'Wet Sox' Baroud | SEAL Frogman"] = "ctm_diver/ctm_diver_variantb",
+                    ["Lieutenant Rex Krikey | SEAL Frogman"] = "ctm_diver/ctm_diver_variantc",
 
-        --             ["Sous-Lieutenant Medic | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_varianta",
-        --             ["Chem-Haz Capitaine | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantb",
-        --             ["Chef d'Escadron Rouchard | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantc",
-        --             ["Aspirant | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantd",
-        --             ["Officer Jacques Beltram | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variante",
+                    ["Michael Syfers | FBI Sniper"] = "ctm_fbi/ctm_fbi_varianth",
+                    ["Operator | FBI SWAT"] = "ctm_fbi/ctm_fbi_variantf",
+                    ["Special Agent Ava | FBI"] = "ctm_fbi/ctm_fbi_variantb",
+                    ["Markus Delrow | FBI HRT"] = "ctm_fbi/ctm_fbi_variantg",
 
-        --             ["D Squadron Officer | NZSAS"] = "ctm_sas/ctm_sas_variantg",
-        --             ["B Squadron Officer | SAS"] = "ctm_sas/ctm_sas_variantf",
+                    ["Sous-Lieutenant Medic | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_varianta",
+                    ["Chem-Haz Capitaine | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantb",
+                    ["Chef d'Escadron Rouchard | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantc",
+                    ["Aspirant | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variantd",
+                    ["Officer Jacques Beltram | Gendarmerie Nationale"] = "ctm_gendarmerie/ctm_gendarmerie_variante",
 
-        --             ["Seal Team 6 Soldier | NSWC SEAL"] = "ctm_st6/ctm_st6_variante",
-        --             ["Buckshot | NSWC SEAL"] = "ctm_st6/ctm_st6_variantg",
-        --             ["Lt. Commander Ricksaw | NSWC SEAL"] = "ctm_st6/ctm_st6_varianti",
-        --             ["'Blueberries' Buckshot | NSWC SEAL"] = "ctm_st6/ctm_st6_variantj",
-        --             ["3rd Commando Company | KSK"] = "ctm_st6/ctm_st6_variantk",
-        --             ["'Two Times' McCoy | TACP Cavalry"] = "ctm_st6/ctm_st6_variantl",
-        --             ["'Two Times' McCoy | USAF TACP"] = "ctm_st6/ctm_st6_variantm",
-        --             ["Primeiro Tenente | Brazilian 1st Battalion"] = "ctm_st6/ctm_st6_variantn",
+                    ["D Squadron Officer | NZSAS"] = "ctm_sas/ctm_sas_variantg",
+                    ["B Squadron Officer | SAS"] = "ctm_sas/ctm_sas_variantf",
 
-        --             ["Cmdr. Mae 'Dead Cold' Jamison | SWAT"] = "ctm_swat/ctm_swat_variante",
-        --             ["1st Lieutenant Farlow | SWAT"] = "ctm_swat/ctm_swat_variantf",
-        --             ["John 'Van Healen' Kask | SWAT"] = "ctm_swat/ctm_swat_variantg",
-        --             ["Bio-Haz Specialist | SWAT"] = "ctm_swat/ctm_swat_varianth",
-        --             ["Sergeant Bombson | SWAT"] = "ctm_swat/ctm_swat_varianti",
-        --             ["Chem-Haz Specialist | SWAT"] = "ctm_swat/ctm_swat_variantj",
-        --             ["Lieutenant 'Tree Hugger' Farlow | SWAT"] = "ctm_swat/ctm_swat_variantk"
-        --         }
-        --     }
+                    ["Seal Team 6 Soldier | NSWC SEAL"] = "ctm_st6/ctm_st6_variante",
+                    ["Buckshot | NSWC SEAL"] = "ctm_st6/ctm_st6_variantg",
+                    ["Lt. Commander Ricksaw | NSWC SEAL"] = "ctm_st6/ctm_st6_varianti",
+                    ["Lt. Commander Rickawede | NSWC SEAL"] = "ctm_st6/ctm_st6_varianti",
+                    ["'Blueberries' Buckshot | NSWC SEAL"] = "ctm_st6/ctm_st6_variantj",
+                    ["'Two Times' McCoy | TACP Cavalry"] = "ctm_st6/ctm_st6_variantl",
+                    ["'Two Times' McCoy | TACP (CAVALRY)"] = "ctm_st6/ctm_st6_variantl",
+                    ["'Two Times' McCoy | USAF TACP"] = "ctm_st6/ctm_st6_variantm",
+                    ["3rd Commando Company | KSK"] = "ctm_st6/ctm_st6_variantk",
+                    ["Primeiro Tenente | Brazilian 1st Battalion"] = "ctm_st6/ctm_st6_variantn",
 
-        --     local master = general.agent_changer
+                    ["Cmdr. Mae 'Dead Cold' Jamison | SWAT"] = "ctm_swat/ctm_swat_varianta",
+                    ["1st Lieutenant Farlow | SWAT"] = "ctm_swat/ctm_swat_variantb",
+                    ["John 'Van Healen' Kask | SWAT"] = "ctm_swat/ctm_swat_variantc",
+                    ["Bio-Haz Specialist | SWAT"] = "ctm_swat/ctm_swat_variantd",
+                    ["Sergeant Bombson | SWAT"] = "ctm_swat/ctm_swat_variante",
+                    ["Chem-Haz Specialist | SWAT"] = "ctm_swat/ctm_swat_variantj",
+                    ["Lieutenant 'Tree Hugger' Farlow | SWAT"] = "ctm_swat/ctm_swat_variantk"
+                }
+            }
 
-        --     function agent_changer.frame_stage_notify(stage)
-        --         if stage ~= 6 then
-        --             return
-        --         end
+            local master = general.agent_changer
+            local last_pawn = nil
+            local last_applied = nil
+            local last_team = nil
 
-        --         if not master:get() then
-        --             return
-        --         end
+            function agent_changer.update()
+                if not master:get() then
+                    last_applied = nil
+                    return
+                end
 
-        --         local me = entitylist.get_local_player_pawn()
+                local level = engine.get_level_name()
+                if not level or level == "" or level:find("<empty>") then
+                    last_pawn = nil
+                    last_applied = nil
+                    last_team = nil
+                    return
+                end
 
-        --         if not me or not me:is_alive() then
-        --             return
-        --         end
+                local me = entitylist.get_local_player_pawn()
+                if not me or not me:is_alive() or not me.m_pGameSceneNode then
+                    last_pawn = nil
+                    last_applied = nil
+                    last_team = nil
+                    return
+                end
 
-        --         local team = ({
-        --             [2] = "terrorist",
-        --             [3] = "c-terrorist"
-        --         })[me.m_iTeamNum]
+                local ent_ptr = ffi.cast("uintptr_t*", me)[0]
+                local team = ({
+                    [2] = "terrorist",
+                    [3] = "c-terrorist"
+                })[me.m_iTeamNum]
 
-        --         if not team then
-        --             return
-        --         end
+                if not team then
+                    return
+                end
 
-        --         local current_models = models[team]
-        --         local model = current_models[master[team]:get()]
-        --         local path = f("agents/models/%s.vmdl", model)
+                local just_spawned = false
+                if ent_ptr ~= last_pawn or team ~= last_team then
+                    last_pawn = ent_ptr
+                    last_team = team
+                    last_applied = nil
+                    just_spawned = true
+                end
 
-        --         me:set_model(path)
-        --     end
-        -- end
+                local current_models = models[team]
+                local model = current_models[master[team]:get()]
+                if not model then
+                    return
+                end
+
+                local target_path = f("agents/models/%s.vmdl", model)
+
+                if target_path ~= last_applied or just_spawned then
+                    me:set_model(target_path)
+                    last_applied = target_path
+                end
+            end
+
+            function agent_changer.unload()
+            end
+        end
 
         function visuals.paint()
+            agent_changer.update()
             depth_of_field.paint()
             fog.paint()
             grenade_esp.paint()
@@ -2812,6 +2890,8 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
             scope_overlay.paint()
             world_effects.paint()
             wetness.paint()
+            bloom.paint()
+            gamma.paint()
         end
 
         function visuals.override_view(view)
@@ -2842,11 +2922,10 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
             world_effects.unload()
             depth_of_field.unload()
             wetness.unload()
+            bloom.unload()
+            gamma.unload()
+            agent_changer.unload()
             shader.unload()
-        end
-
-        function visuals.frame_stage_notify(stage)
-            -- agent_changer.frame_stage_notify(stage)
         end
     end
 
@@ -3108,7 +3187,6 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
                 local flags = me.m_fFlags
                 local on_ground = bit.band(flags, FL_ONGROUND) ~= 0
 
-                -- Edge Jump: ����������� ������ ��� ����� � ������ (��� �� ����� -> �������� � ������� ��� ������ �����)
                 if extra.edge_jump:is_active() and was_on_ground and not on_ground then
                     local vel = me:get_velocity()
                     if vel and vel.z <= 0 then
@@ -3317,9 +3395,7 @@ __bundle_register("__root", function(require, _LOADED, __bundle_register, __bund
         end
     end
 
-    events.frame_stage_notify:set(function(stage)
-        visuals.frame_stage_notify(stage)
-    end)
+
 
     events.paint:set(function()
         threat = entity.get_threat()
@@ -4031,7 +4107,11 @@ __bundle_register("engine/vmt", function(require, _LOADED, __bundle_register, __
 
         -- Create a wrapper that passes original_fn as the first argument
         local wrapper = function(...)
-            return callback(original_fn, ...)
+            local ok, res = pcall(callback, original_fn, ...)
+            if not ok then
+                return original_fn(...)
+            end
+            return res
         end
 
         local callback_fn = ffi.cast(type_name, wrapper)
@@ -4813,11 +4893,11 @@ __bundle_register("engine/entity", function(require, _LOADED, __bundle_register,
 
     local MAX_DUCK_SPEED = 8
     local set_model; do
-        -- // STR: "models/inventory_items/dogtags.vmdl"
-        local sig = assert(
-            find_pattern("client.dll", "40 53 48 83 ? ? 48 8B ? 4C 8B ? 48 8B ? ? ? ? ? 48 8D ? ? ? 48 8B"),
-            "fnSetModel outdated")
-        set_model = ffi.cast("void* (__fastcall*)(void*, const char*)", sig)
+        local sig = find_pattern("client.dll", "40 53 48 83 EC 20 48 8B D9 4C 8B C2 48 8B 0D ?? ?? ?? ?? 48 8D 54 24") or
+            find_pattern("client.dll", "40 53 48 83 ? ? 48 8B ? 4C 8B ? 48 8B ? ? ? ? ? 48 8D ? ? ? 48 8B")
+        if sig then
+            set_model = ffi.cast("void* (__fastcall*)(void*, const char*)", sig)
+        end
     end
 
     local math_min, math_max, math_floor, math_ceil = math.min, math.max, math.floor, math.ceil;
@@ -5009,20 +5089,29 @@ __bundle_register("engine/entity", function(require, _LOADED, __bundle_register,
     end
 
     function base_entity_t:set_model(path)
-        local ptr = ffi.cast("uintptr_t*", self[m_pCollision])[0]
+        if not self then return end
 
-        if ptr == 0 then
-            set_model(self[0], path)
+        local ent_ptr = ffi.cast("uintptr_t*", self)[0]
+        if not ent_ptr or ent_ptr == 0 then return end
+
+        if not m_pCollision or not m_vecMins or not m_vecMaxs then
+            set_model(ffi.cast("void*", ent_ptr), path)
             return
         end
 
-        local mins = ffi.cast("float*", ptr + m_vecMins)
-        local maxs = ffi.cast("float*", ptr + m_vecMaxs)
+        local collision_ptr = ffi.cast("uintptr_t*", ent_ptr + m_pCollision)[0]
+        if collision_ptr == 0 then
+            set_model(ffi.cast("void*", ent_ptr), path)
+            return
+        end
+
+        local mins = ffi.cast("float*", collision_ptr + m_vecMins)
+        local maxs = ffi.cast("float*", collision_ptr + m_vecMaxs)
 
         local mins_x, mins_y, mins_z = mins[0], mins[1], mins[2]
         local maxs_x, maxs_y, maxs_z = maxs[0], maxs[1], maxs[2]
 
-        set_model(self[0], path)
+        set_model(ffi.cast("void*", ent_ptr), path)
 
         mins[0], mins[1], mins[2] = mins_x, mins_y, mins_z
         maxs[0], maxs[1], maxs[2] = maxs_x, maxs_y, maxs_z
@@ -6597,7 +6686,8 @@ __bundle_register("render/gui", function(require, _LOADED, __bundle_register, __
 
             function gui_render:slider(item, pos, column_width, alpha, mouse, it_gear, gear)
                 local box_size = vec2_t(column_width - PADDING * 3.5 - 7, 10)
-                local formatted_value = string.format(item.suffix, item.value);
+                local formatted_value = type(item.suffix) == "function" and item.suffix(item.value) or
+                string.format(item.suffix, item.value);
                 local x, y = pos.x, pos.y
 
                 local item_value = item.value;
@@ -9551,7 +9641,7 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
         } CUserCmd;
     ]]
 
-        -- local Source2Client002 = utils.create_interface("client.dll", "Source2Client002")
+        local Source2Client002 = utils.create_interface("client.dll", "Source2Client002")
 
         local fnCreateMove, GetUserCmd; do
             fnCreateMove = assert(find_pattern("client.dll", "E9 ?? ?? ?? ?? ?? ?? ?? 48 8B C4 44 88 40 18"),
@@ -9618,7 +9708,7 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
 
         -- котакбасина туда встань
         -- local fnOverrideView = assert(opcode_scan("client.dll", "48 89 5C 24 10 55 48 8D 6C 24 A9 48 81 EC B0 00 00 00"), "fnOverrideView outdated") -- // ClientModeShared > 15
-        -- local fnFrameStageNotify = vmt.get_v_method(Source2Client002, 36) -- // @xref: STR: "Client Restore Server State", "FrameNetUpdate(%.3f %d)", "FramePostDataUpdate(%.3f %d)", "C:\buildworker\csgo_rel_win64\build\src\game\client\cdll_client_int.cpp"
+
         local fnLevelInit = assert(find_pattern("client.dll", "40 55 56 41 56 48 8D 6C 24 ? 48 81 EC ? ? ? ? 48"),
             "fnLevelInit outdated") -- // @xref: game_newmap, mapname
         local fnLevelShutdown = assert(
@@ -9983,14 +10073,6 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
         --     end
         -- end
 
-        local function hkFrameStageNotify(o_fn, source2client, stage)
-            if stage then
-                call_handlers("frame_stage_notify", stage)
-            end
-
-            o_fn(source2client, stage)
-        end
-
 
         local function hkLevelInit(o_fn, a1, mapname)
             if mapname then
@@ -10025,17 +10107,7 @@ __bundle_register("engine/events", function(require, _LOADED, __bundle_register,
         --     return o_fn(a1, a2, a3, a4, a5, a6)
         -- end, "__int64(*)(void*, unsigned int, int, void*, const char*, void*)")
         -- create_hook(fnOverrideView, hkOverrideView, "void(__fastcall*)(void*, void*)")
-        -- vmt.hook(Source2Client002, 36, function(o_fn, this, stage)
-        --     if engine.get_level_name():find("empty") then
-        --         return o_fn(this, stage)
-        --     end
 
-        --     if stage then
-        --         call_handlers("frame_stage_notify", stage)
-        --     end
-
-        --     o_fn(this, stage)
-        -- end, "void(__fastcall*)(void*, int)")
         create_hook(fnLevelShutdown, hkShutdown, "void(__fastcall*)(void*, void*)")
         create_hook(fnLevelInit, hkLevelInit, "void*(__fastcall*)(void*, const char*)")
 
